@@ -89,7 +89,7 @@ public class UiSimplu {
 
 
     private void showUtilizatori(){
-        System.out.println("Utizatori:");
+        System.out.println("Utizatori sunt:");
         uService.getAll().forEach(System.out::println);
     }
 
