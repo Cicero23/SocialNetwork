@@ -27,5 +27,7 @@ public class main3 {
         String password= ApplicationContext.getPROPERTIES().getProperty("database.socialnetwork.password");
         Repository<Long, Invitatie> invitatieDBrepo = new InvitatieDBrepo(url,username,password);
         invitatieDBrepo.save(new Invitatie(19,29,LocalDate.now(),1));
+
+
     }
 }
