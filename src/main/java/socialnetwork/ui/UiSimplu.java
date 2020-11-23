@@ -29,6 +29,7 @@ public class UiSimplu {
         while (true){
             System.out.print(">>");
             String s = in.nextLine();
+            String ceva = "ceva";
             if(s.equals("exit")){
                 in.close();
                 break;
