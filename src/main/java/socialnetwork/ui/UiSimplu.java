@@ -30,6 +30,7 @@ public class UiSimplu {
             System.out.print(">>");
             String s = in.nextLine();
             int ceva = 5;
+            //ceva mesaj
             if(s.equals("exit")){
                 in.close();
                 break;
