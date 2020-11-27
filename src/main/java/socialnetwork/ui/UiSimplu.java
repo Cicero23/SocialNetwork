@@ -84,6 +84,7 @@ public class UiSimplu {
             else {
                 System.out.println("Comanda invalida");
             }
+            System.out.println("Ceva mesaj");
         }
     }
 
