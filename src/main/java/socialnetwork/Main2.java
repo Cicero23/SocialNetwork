@@ -7,10 +7,7 @@ import socialnetwork.domain.validators.UtilizatorValidator;
 import socialnetwork.domain.validators.ValidationException;
 import socialnetwork.domain.validators.Validator;
 import socialnetwork.repository.Repository;
-import socialnetwork.repository.database.InvitatieDBrepo;
-import socialnetwork.repository.database.MessageDBRepo;
-import socialnetwork.repository.database.PrieteniiDBrepo;
-import socialnetwork.repository.database.UsersDBrepo;
+import socialnetwork.repository.database.*;
 import socialnetwork.repository.factory.FactoryPrietenie;
 import socialnetwork.repository.factory.FactoryUtilizatorDB;
 import socialnetwork.service.UtilizatorService;
@@ -27,7 +24,8 @@ public class Main2 {
         Repository<Tuple<Long,Long>, Prietenie> prieteniiDBrepo = new PrieteniiDBrepo(url, username, password, new PrietenieValidator());
         Repository<Long, Message> messageDBrepository = new MessageDBRepo(url, username,password);
         Repository<Long, Invitatie> invitatieDBrepository = new InvitatieDBrepo(url, username,password);
-        UtilizatorService utilizatorService  = new UtilizatorService(usersDBrepo,prieteniiDBrepo,new FactoryUtilizatorDB(" "),new FactoryPrietenie(" "), messageDBrepository,invitatieDBrepository );
+        AccountDBrepo accountDBrepo = new AccountDBrepo(url,username,password);
+        UtilizatorService utilizatorService  = new UtilizatorService(usersDBrepo,prieteniiDBrepo,new FactoryUtilizatorDB(" "),new FactoryPrietenie(" "), messageDBrepository,invitatieDBrepository,accountDBrepo);
         UiSimplu uiSimplu = new UiSimplu(utilizatorService);
         uiSimplu.run();
     }

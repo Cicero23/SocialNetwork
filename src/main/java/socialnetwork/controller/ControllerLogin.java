@@ -1,4 +1,4 @@
 package socialnetwork.controller;
 
-public class Controller {
+public class ControllerLogin {
 }

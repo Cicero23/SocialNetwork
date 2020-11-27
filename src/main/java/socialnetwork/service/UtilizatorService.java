@@ -2,6 +2,7 @@ package socialnetwork.service;
 
 import socialnetwork.domain.*;
 import socialnetwork.repository.Repository;
+import socialnetwork.repository.database.AccountDBrepo;
 import socialnetwork.repository.factory.Factory;
 import socialnetwork.repository.factory.FactoryPrietenie;
 import socialnetwork.repository.factory.FactoryUtiliziator;
@@ -18,16 +19,18 @@ public class UtilizatorService  {
     private Repository<Tuple<Long, Long>, Prietenie> repoPrietenii;
     private Repository<Long, Message> repoMessage;
     private Repository<Long, Invitatie> repoInvitatie;
+    private AccountDBrepo repoAccount;
     Factory<Long,Utilizator> utilizatorFactory;
     Factory<Tuple<Long,Long>,Prietenie> prietenieFactory;
     private static int l= -1;
-    public UtilizatorService(Repository<Long, Utilizator> repoUtilizatori, Repository<Tuple<Long, Long>, Prietenie> repoPrietenii, Factory<Long,Utilizator> utilizatorFactory, Factory<Tuple<Long,Long>,Prietenie> prietenieFactory, Repository<Long, Message> repoMessage, Repository<Long, Invitatie> repoInvitatie) {
+    public UtilizatorService(Repository<Long, Utilizator> repoUtilizatori, Repository<Tuple<Long, Long>, Prietenie> repoPrietenii, Factory<Long,Utilizator> utilizatorFactory, Factory<Tuple<Long,Long>,Prietenie> prietenieFactory, Repository<Long, Message> repoMessage, Repository<Long, Invitatie> repoInvitatie,AccountDBrepo repoAccount) {
         this.repoUtilizatori = repoUtilizatori;
         this.repoPrietenii = repoPrietenii;
         this.utilizatorFactory = utilizatorFactory;
         this.prietenieFactory = prietenieFactory;
         this.repoMessage = repoMessage;
         this.repoInvitatie = repoInvitatie;
+        this.repoAccount = repoAccount;
         uniteRepo();
     }
 

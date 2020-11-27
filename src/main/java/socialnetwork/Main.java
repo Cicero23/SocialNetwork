@@ -19,16 +19,7 @@ import socialnetwork.ui.UiSimplu;
 
 public class Main {
     public static void main(String[] args) {
-        /*String fileNameUtil=ApplicationContext.getPROPERTIES().getProperty("data.socialnetwork.users");
-        String fileNamePriet=ApplicationContext.getPROPERTIES().getProperty("data.socialnetwork.prietenii");
-        //String fileName="data/users.csv";
-        Repository<Long,Utilizator> userFileRepository = new FileRepository<Long,Utilizator>(fileNameUtil, new UtilizatorValidator(),new FactoryUtiliziator(";"));
-        Repository<Tuple<Long, Long>, Prietenie> prietenieFileRepository = new FileRepository<Tuple<Long,Long>,Prietenie>(fileNamePriet, new PrietenieValidator(),new FactoryPrietenie(";"));
-
-        UtilizatorService utilizatorService  = new UtilizatorService(userFileRepository,prietenieFileRepository,new FactoryUtiliziator(""),new FactoryPrietenie(" "));
-        UiSimplu uiSimplu = new UiSimplu(utilizatorService);
-        uiSimplu.run();
-        */
+        MainFX.main(args);
     }
 }
 
