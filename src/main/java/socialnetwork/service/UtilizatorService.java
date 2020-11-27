@@ -358,4 +358,8 @@ public class UtilizatorService  {
         return null;
     }
 
+    public Account signin(String username, String password){
+        return repoAccount.findOne(username,password);
+    }
+
 }
