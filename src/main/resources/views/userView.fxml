@@ -1,22 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ListView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-
-<AnchorPane prefHeight="500.0" prefWidth="900.0" style="-fx-background-color: #20120F;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"  >
+<AnchorPane prefHeight="500.0" prefWidth="900.0" style="-fx-background-color: #20120F;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <AnchorPane layoutX="306.0" layoutY="50.0" prefHeight="400.0" prefWidth="520.0">
          <children>
-            <AnchorPane fx:id="users_layout" layoutX="93.0" layoutY="141.0" prefHeight="400.0" prefWidth="520.0" style="-fx-background-color: #b56100; -fx-background-radius: 20;" />
-            <AnchorPane fx:id="friends_layout" disable="true" prefHeight="400.0" prefWidth="520.0" style="-fx-background-color: #b56100; -fx-background-radius: 20;" visible="false" />
-            <AnchorPane fx:id="requests_layout" disable="true" prefHeight="400.0" prefWidth="520.0" style="-fx-background-color: #b56100; -fx-background-radius: 20;" visible="false" />
+            <AnchorPane fx:id="users_layout" prefHeight="400.0" prefWidth="520.0" style="-fx-background-color: #b56100; ">
+               <children>
+                  <ListView fx:id="users_listView" prefHeight="400.0" prefWidth="520.0" style="-fx-background-color: #b56100;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+               </children></AnchorPane>
+            <AnchorPane fx:id="friends_layout" disable="true" prefHeight="400.0" prefWidth="520.0" style="-fx-background-color: #b56100; " visible="false">
+               <children>
+                  <ListView fx:id="friends_listView" prefHeight="400.0" prefWidth="520.0" style="-fx-background-color: #b56100; " AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+               </children></AnchorPane>
+            <AnchorPane fx:id="requests_layout" disable="true" prefHeight="400.0" prefWidth="520.0" style="-fx-background-color: #b56100;" visible="false">
+               <children>
+                  <ListView fx:id="requests_listView" prefHeight="400.0" prefWidth="520.0" style="-fx-background-color: #b56100;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+               </children></AnchorPane>
          </children>
       </AnchorPane>
-      <AnchorPane layoutX="15.0" layoutY="14.0" prefHeight="125.0" prefWidth="210.0" style="-fx-background-color: #b56100; -fx-background-radius: 30;">
+      <AnchorPane layoutX="15.0" layoutY="14.0" prefHeight="125.0" prefWidth="210.0" style="-fx-background-color: #b56100; ">
          <children>
             <Text fx:id="first_name_text" layoutX="36.0" layoutY="70.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Anamaria" textAlignment="CENTER" wrappingWidth="139.0">
                <font>
@@ -30,9 +39,9 @@
             </Text>
          </children>
       </AnchorPane>
-      <AnchorPane layoutX="15.0" layoutY="181.0" prefHeight="299.0" prefWidth="210.0" style="-fx-background-color: #b56100; -fx-background-radius: 20;">
+      <AnchorPane layoutX="15.0" layoutY="181.0" prefHeight="299.0" prefWidth="210.0" style="-fx-background-color: #b56100; ">
          <children>
-            <Pane fx:id="users_button" layoutX="14.0" layoutY="14.0" prefHeight="55.0" prefWidth="185.0" style="-fx-background-color: #c77f20; -fx-background-radius: 20;">
+            <Pane fx:id="users_button" layoutX="14.0" layoutY="14.0" onMouseClicked="#moveTousers" prefHeight="55.0" prefWidth="185.0" style="-fx-background-color: #c77f20; ">
                <padding>
                   <Insets bottom="7.0" />
                </padding>
@@ -44,10 +53,7 @@
                   </Text>
                </children>
             </Pane>
-            <Pane fx:id="friends_button" layoutX="14.0" layoutY="75.0" prefHeight="55.0" prefWidth="185.0" style="-fx-background-color: #c77f20; -fx-background-radius: 20;">
-               <padding>
-                  <Insets top="7.0" />
-               </padding>
+            <Pane fx:id="friends_button" layoutX="14.0" layoutY="75.0" onMouseClicked="#moveTofriends" prefHeight="55.0" prefWidth="185.0" style="-fx-background-color: #c77f20; ">
                <children>
                   <Text layoutX="47.0" layoutY="39.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Friends" textAlignment="RIGHT" wrappingWidth="124.0">
                      <font>
@@ -56,7 +62,7 @@
                   </Text>
                </children>
             </Pane>
-            <Pane fx:id="requests_button" layoutX="13.0" layoutY="136.0" prefHeight="55.0" prefWidth="185.0" style="-fx-background-color: #c77f20; -fx-background-radius: 20;">
+            <Pane fx:id="requests_button" layoutX="13.0" layoutY="136.0" onMouseClicked="#moveTorequests" prefHeight="55.0" prefWidth="185.0" style="-fx-background-color: #c77f20; ">
                <children>
                   <Text layoutX="41.0" layoutY="39.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Requests" textAlignment="RIGHT" wrappingWidth="130.0">
                      <font>

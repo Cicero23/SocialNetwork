@@ -8,9 +8,9 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="400" prefWidth="800" style="-fx-background-color: #20120F;" stylesheets="@../CSS/loginView.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="socialnetwork.controller.ControllerLogin">
+<AnchorPane prefHeight="400" prefWidth="800" style="-fx-background-color: #20120F;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="socialnetwork.controller.ControllerLogin">
    <children>
-      <AnchorPane layoutX="400.0" layoutY="29.0" prefHeight="342.0" prefWidth="342.0" style="-fx-background-color: #b56100;" stylesheets="@../CSS/loginView.css">
+      <AnchorPane layoutX="400.0" layoutY="29.0" prefHeight="342.0" prefWidth="342.0" style="-fx-background-color: #b56100;">
          <children>
             <Label layoutX="88.0" layoutY="14.0" prefHeight="80.0" prefWidth="167.0" style="-fx-alignment: center;" text="Sign in" textAlignment="CENTER">
                <font>
@@ -22,12 +22,12 @@
                   <Font name="System Bold" size="18.0" />
                </font>
             </Button>
-            <TextField fx:id="username_field" layoutX="41.0" layoutY="112.0" prefHeight="25.0" prefWidth="261.0" promptText=" username" style="-fx-background-color: no; -fx-border-color: #c77f20; -fx-border-width: 0 0 3 0;">
+            <TextField fx:id="username_field" layoutX="41.0" layoutY="112.0" prefHeight="25.0" prefWidth="261.0" promptText=" username" style="-fx-background-color: none; -fx-border-color: #c77f20; -fx-border-width: 0 0 3 0;">
                <font>
                   <Font name="System Bold" size="18.0" />
                </font>
             </TextField>
-            <PasswordField fx:id="password_field" layoutX="41.0" layoutY="171.0" prefHeight="27.0" prefWidth="261.0" promptText=" password" style="-fx-background-color: no; -fx-border-width: 0 0 3 0; -fx-border-color: #c77f20;">
+            <PasswordField fx:id="password_field" layoutX="41.0" layoutY="171.0" prefHeight="27.0" prefWidth="261.0" promptText=" password" style="-fx-background-color: none; -fx-border-width: 0 0 3 0; -fx-border-color: #c77f20;">
                <font>
                   <Font name="System Bold" size="18.0" />
                </font>

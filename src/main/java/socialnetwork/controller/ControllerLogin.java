@@ -59,7 +59,9 @@ public class ControllerLogin {
                 controllerUtilizator.setService(utilizatorService,signed_in_account.getId_user());
                 utilLoader.setController(controllerUtilizator);
                 AnchorPane userLayout = utilLoader.load();
-                sign_inStage.setScene(new Scene(userLayout));
+                Scene scene =new Scene(userLayout);
+                scene.getStylesheets().add("/CSS/listviewStyle.css");
+                sign_inStage.setScene(scene);
 
 
             }

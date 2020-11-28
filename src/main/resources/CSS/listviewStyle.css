@@ -1,0 +1,35 @@
+.list-view .list-cell:even {
+    -fx-background-color: #c77f20;
+    -fx-pref-height: 50;
+    -fx-background-radius: 20;
+    -fx-text-fill: black;
+}
+.list-view .list-cell:odd {
+    -fx-background-color: #c77f20;
+    -fx-background-radius: 20;
+    -fx-pref-height: 50;
+    -fx-text-fill: black;
+}
+
+.list-view.list-cell {
+
+}
+.list-view{
+
+}
+
+.hbox-list{
+
+}
+
+.textLabel-list{
+    -fx-font-size: 26;
+    -fx-pref-width: 300;
+    -fx-font-weight: bold;
+}
+.datatextLabel-list{
+    -fx-font-size: 26;
+    -fx-pref-width: 220;
+    -fx-font-weight: bold;
+    -fx-alignment: right;
+}
