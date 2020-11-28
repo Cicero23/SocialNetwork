@@ -261,6 +261,10 @@ public class UtilizatorService  {
             return  null;
     }
 
+    public Utilizator getOne(Long id){
+        return repoUtilizatori.findOne(id);
+    }
+
     public Iterable<Message> getConversatie(long id1, long id2) {
         List<Message> ans = new ArrayList<>();
         repoMessage.findAll().forEach(x->{

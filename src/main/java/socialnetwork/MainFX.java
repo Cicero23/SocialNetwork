@@ -54,7 +54,7 @@ public class MainFX extends Application {
         primaryStage.setScene(new Scene(loginLayout));
 
         ControllerLogin controllerLogin =loginLoader.getController();
-        controllerLogin.setService(utilizatorService);
+        controllerLogin.setService(utilizatorService,primaryStage);
 
     }
 
