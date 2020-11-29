@@ -4,9 +4,8 @@ import socialnetwork.domain.*;
 import socialnetwork.repository.Repository;
 import socialnetwork.repository.database.AccountDBrepo;
 import socialnetwork.repository.factory.Factory;
-import socialnetwork.repository.factory.FactoryPrietenie;
-import socialnetwork.repository.factory.FactoryUtiliziator;
-
+import socialnetwork.utils.observer.Observable;
+import socialnetwork.utils.observer.Observer;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -14,7 +13,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-public class UtilizatorService  {
+public class UtilizatorService extends Observable{
     private Repository<Long, Utilizator> repoUtilizatori;
     private Repository<Tuple<Long, Long>, Prietenie> repoPrietenii;
     private Repository<Long, Message> repoMessage;
@@ -24,6 +23,7 @@ public class UtilizatorService  {
     Factory<Tuple<Long,Long>,Prietenie> prietenieFactory;
     private static int l= -1;
     public UtilizatorService(Repository<Long, Utilizator> repoUtilizatori, Repository<Tuple<Long, Long>, Prietenie> repoPrietenii, Factory<Long,Utilizator> utilizatorFactory, Factory<Tuple<Long,Long>,Prietenie> prietenieFactory, Repository<Long, Message> repoMessage, Repository<Long, Invitatie> repoInvitatie,AccountDBrepo repoAccount) {
+        super();
         this.repoUtilizatori = repoUtilizatori;
         this.repoPrietenii = repoPrietenii;
         this.utilizatorFactory = utilizatorFactory;
@@ -56,6 +56,9 @@ public class UtilizatorService  {
     public Utilizator addUtilizator(String s) {
         Utilizator utilizator = utilizatorFactory.extractEntity(s);
         Utilizator task = repoUtilizatori.save(utilizator);
+        if(task == null){
+            notifyObservers();
+        }
         return task;
     }
 
@@ -67,6 +70,7 @@ public class UtilizatorService  {
                 repoPrietenii.delete(new Tuple<Long, Long>(x.getId(), id));
                 repoPrietenii.delete(new Tuple<Long, Long>(id, x.getId()));
             });
+            notifyObservers();
         }
         return task;
     }
@@ -86,6 +90,7 @@ public class UtilizatorService  {
             Utilizator u2 = repoUtilizatori.findOne(pr.getId().getRight());
             u1.addFriend(u2);
             u2.addFriend(u1);
+            notifyObservers();
         }
         return task;
     }
@@ -97,9 +102,15 @@ public class UtilizatorService  {
             Utilizator u2 = repoUtilizatori.findOne(task.getId().getRight());
             u1.removeFriend(u2);
             u2.removeFriend(u1);
+            notifyObservers();
         }
         return task;
     }
+
+    public Prietenie getPrietenie(Tuple<Long,Long> id){
+        return  repoPrietenii.findOne(id);
+    }
+
     ///TO DO: add othemethods
 
     private List<Comunitate> createComunitati(){
@@ -310,8 +321,10 @@ public class UtilizatorService  {
     public Invitatie sendInvidatie(long id_from,long id_to){
         if(repoPrietenii.findOne(new Tuple<>(id_from,id_to)) == null && repoPrietenii.findOne(new Tuple<>(id_to,id_from)) == null){
             Invitatie invitatie = new Invitatie(id_from,id_to,LocalDate.now(),1);
-            if(repoInvitatie.save(invitatie) == null)
+            if(repoInvitatie.save(invitatie) == null) {
+                notifyObservers();
                 return invitatie;
+            }
             else
                 return null;
 
@@ -338,6 +351,7 @@ public class UtilizatorService  {
                 Prietenie pr = new Prietenie(LocalDate.now());
                 pr.setId(new Tuple<>(inv.getId_from(),inv.getId_to()));
                 repoPrietenii.save(pr);
+                notifyObservers();
                 return  inv;
             }
             else{
@@ -353,6 +367,7 @@ public class UtilizatorService  {
             if(inv.getId_to() == id_user && inv.getStare() == 1){
                 inv.setStare(2);
                 repoInvitatie.update(inv);
+                notifyObservers();
                 return  inv;
             }
             else{
@@ -366,4 +381,20 @@ public class UtilizatorService  {
         return repoAccount.findOne(username,password);
     }
 
+    private List<Observer> observers = new ArrayList<Observer>();
+
+    @Override
+    public void addObserver(Observer e) {
+        observers.add(e);
+    }
+
+    @Override
+    public void removeObserver(Observer e) {
+        observers.remove(e);
+    }
+
+    @Override
+    public void notifyObservers() {
+        observers.stream().forEach(x->x.update());
+    }
 }

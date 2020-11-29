@@ -24,12 +24,12 @@
 
 .textLabel-list{
     -fx-font-size: 26;
-    -fx-pref-width: 300;
+    -fx-pref-width: 250;
     -fx-font-weight: bold;
 }
 .datatextLabel-list{
-    -fx-font-size: 26;
-    -fx-pref-width: 220;
+    -fx-font-size: 20;
+    -fx-pref-width: 250;
     -fx-font-weight: bold;
-    -fx-alignment: right;
+
 }

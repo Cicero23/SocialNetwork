@@ -19,22 +19,25 @@ import javafx.scene.layout.Pane;
 import javafx.scene.shape.Box;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import socialnetwork.domain.Account;
-import socialnetwork.domain.Utilizator;
+import socialnetwork.domain.*;
+import socialnetwork.repository.database.PrieteniiDBrepo;
 import socialnetwork.service.UtilizatorService;
+import socialnetwork.utils.observer.Observer;
 
 import java.awt.*;
 import java.io.IOException;
 
 
-public class ControllerUtilizator {
+public class ControllerUtilizator extends Observer {
     Long id_sign_inUtil;
 
     UtilizatorService utilizatorService;
-
-    ObservableList<HBox> listUsers = FXCollections.observableArrayList();
-    ObservableList<HBox> listFriends = FXCollections.observableArrayList();
-    ObservableList<HBox> listRequests = FXCollections.observableArrayList();
+    ObservableList<Utilizator> listUsers = FXCollections.observableArrayList();
+    ObservableList<PrietenDTO> listFriends = FXCollections.observableArrayList();
+    ObservableList<Invitatie> listRequests = FXCollections.observableArrayList();
+    ObservableList<HBox> listUsersBox = FXCollections.observableArrayList();
+    ObservableList<HBox> listFriendsBox = FXCollections.observableArrayList();
+    ObservableList<HBox> listRequestsBox = FXCollections.observableArrayList();
     @FXML
     AnchorPane users_layout;
     @FXML
@@ -61,26 +64,75 @@ public class ControllerUtilizator {
 
     @FXML
     private void initialize() {
-        utilizatorService.getAll().forEach(x->{
+
+        utilizatorService.getAll().forEach(x->listUsers.add(x));
+        utilizatorService.getPrieteni(id_sign_inUtil).forEach(x->listFriends.add(x));
+        utilizatorService.getInvitatiiPrimite(id_sign_inUtil).forEach(x->listRequests.add(x));
+
+        listUsers.stream().forEach(x->{
+            if(x.getId()!= id_sign_inUtil) {
+                HBox util = new HBox();
+                Label textLabel = new Label(x.getFirstName() + " " + x.getLastName());
+                textLabel.getStyleClass().add("textLabel-list");
+                util.getStyleClass().add("hbox-list");
+                util.getChildren().add(textLabel);
+
+
+                if (utilizatorService.getPrietenie(new Tuple<>(id_sign_inUtil, x.getId())) == null && utilizatorService.getPrietenie(new Tuple<>(x.getId(), id_sign_inUtil)) == null) {
+                    Button btn = new Button("Send request");
+                    btn.setOnAction(new EventHandler<ActionEvent>() {
+                        @Override
+                        public void handle(ActionEvent event) {
+                            utilizatorService.sendInvidatie(id_sign_inUtil,x.getId());
+                            btn.setDisable(true);
+                            btn.setVisible(false);
+                        }
+                    });
+                    util.getChildren().add(btn);
+                }
+
+                listUsersBox.add(util);
+            }
+        });
+        users_listView.getItems().setAll(listUsersBox);
+
+        initModel();
+
+
+
+        Utilizator x = utilizatorService.getOne(id_sign_inUtil);
+        first_name_text.setText(x.getFirstName());
+        last_name_text.setText(x.getLastName());
+
+    }
+
+    private void initModel(){
+
+        loadFriends();
+        loadRequests();
+    }
+
+    private void loadUsers(){
+
+    }
+
+    private void loadRequests(){
+        listRequestsBox.clear();
+        utilizatorService.getInvitatiiPrimite(id_sign_inUtil).forEach(x->{
+            Utilizator utilizator =utilizatorService.getOne(x.getId_from());
             HBox util = new HBox();
-            Label textLabel = new Label(x.getFirstName() + " " + x.getLastName());
+            Label textLabel = new Label(utilizator.getFirstName()+" " +utilizator.getLastName());
             textLabel.getStyleClass().add("textLabel-list");
             util.getStyleClass().add("hbox-list");
             util.getChildren().add(textLabel);
-            Button btn = new Button("aaaa");
-            btn.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    Alert message=new Alert(Alert.AlertType.ERROR);
-                    message.setTitle("merge");
-                    message.showAndWait();
-                }
-            });
-            util.getChildren().add(btn);
-            listUsers.add(util);
+            listRequestsBox.add(util);
         });
-        users_listView.getItems().setAll(listUsers);
+        requests_listView.getItems().clear();
+        requests_listView.getItems().addAll(listRequestsBox);
+    }
 
+    private void loadFriends(){
+        listFriendsBox.clear();
         utilizatorService.getPrieteni(id_sign_inUtil).forEach(x->{
             HBox util = new HBox();
             Label textLabel = new Label(x.getNume() + " " + x.getPrenume());
@@ -91,33 +143,19 @@ public class ControllerUtilizator {
 
             util.getChildren().add(textLabel);
             util.getChildren().add(textData);
-            listFriends.add(util);
+            listFriendsBox.add(util);
         });
-
-        friends_listView.getItems().addAll(listFriends);
-
-        utilizatorService.getInvitatiiPrimite(id_sign_inUtil).forEach(x->{
-            Utilizator utilizator =utilizatorService.getOne(x.getId_from());
-            HBox util = new HBox();
-            Label textLabel = new Label(utilizator.getFirstName()+" " +utilizator.getLastName());
-            textLabel.getStyleClass().add("textLabel-list");
-            util.getStyleClass().add("hbox-list");
-            util.getChildren().add(textLabel);
-            listRequests.add(util);
-        });
-
-        requests_listView.getItems().addAll(listRequests);
-
-        Utilizator x = utilizatorService.getOne(id_sign_inUtil);
-        if(x!= null) {
-            first_name_text.setText(x.getFirstName());
-            last_name_text.setText(x.getLastName());
-        }
+        friends_listView.getItems().clear();
+        friends_listView.getItems().addAll(listFriendsBox);
     }
+
+
+
 
     public void setService(UtilizatorService utilizatorService, Long utilizator) {
         this.utilizatorService = utilizatorService;
         this.id_sign_inUtil = utilizator;
+        utilizatorService.addObserver(this);
     }
 
     @FXML
@@ -147,24 +185,17 @@ public class ControllerUtilizator {
         friends_layout.setVisible(false);
         users_layout.setDisable(true);
         users_layout.setVisible(false);
+        loadRequests();
 
         requests_layout.setDisable(false);
         requests_layout.setVisible(true);
 
+
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+    @Override
+    public void update() {
+        initModel();
+    }
 }
