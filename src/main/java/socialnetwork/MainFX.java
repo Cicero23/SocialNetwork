@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import socialnetwork.config.ApplicationContext;
 import socialnetwork.controller.ControllerLogin;
 import socialnetwork.domain.*;
@@ -51,6 +52,8 @@ public class MainFX extends Application {
         FXMLLoader loginLoader = new FXMLLoader();
         loginLoader.setLocation(getClass().getResource("/views/loginView.fxml"));
         AnchorPane loginLayout = loginLoader.load();
+        primaryStage.initStyle(StageStyle.TRANSPARENT);
+
         primaryStage.setScene(new Scene(loginLayout));
 
         ControllerLogin controllerLogin =loginLoader.getController();
