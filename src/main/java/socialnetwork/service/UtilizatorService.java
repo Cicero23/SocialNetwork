@@ -7,8 +7,10 @@ import socialnetwork.repository.factory.Factory;
 import socialnetwork.utils.observer.Observable;
 import socialnetwork.utils.observer.Observer;
 
+import javax.swing.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.chrono.ChronoLocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -420,6 +422,43 @@ public class UtilizatorService extends Observable{
         return  invitatie;
     }
 
+    public List<ActionDTO> getActionsDuringPeriod(Long id, LocalDate a, LocalDate b){
+        List<ActionDTO> ans= new ArrayList<>();
+
+        repoPrietenii.findAll().forEach(x->{
+            if(x.getId().getLeft() == id){
+                Utilizator utilizator = repoUtilizatori.findOne(x.getId().getRight());
+                String s = "New Friend: " + utilizator.getFirstName() + " " + utilizator.getLastName();
+                ans.add(new ActionDTO(s,x.getDate()));
+
+            }
+            if(x.getId().getRight() == id){
+                Utilizator utilizator = repoUtilizatori.findOne(x.getId().getLeft());
+                String s = "New Friend: " + utilizator.getFirstName() + " " + utilizator.getLastName();
+                ans.add(new ActionDTO(s,x.getDate()));
+
+            }
+
+
+        });
+
+
+        repoMessage.findAll().forEach(x-> {
+            for (Long y : x.getTo()) {
+                if (y == id) {
+                    Utilizator utilizator = repoUtilizatori.findOne(x.getFrom());
+                    String s = "Message from " + utilizator.getFirstName() + " " + utilizator.getLastName() + ": " + x.getMesaj();
+                    ans.add(new ActionDTO(s,x.getData().toLocalDate()));
+                    break;
+                }
+            }
+        });
+
+
+        return  ans.stream().filter(x->{
+            return x.getDate().isBefore(ChronoLocalDate.from(b)) && x.getDate().isAfter(ChronoLocalDate.from(a));
+        }).sorted(Comparator.comparing(ActionDTO::getDate)).collect(Collectors.toList());
+    }
 
 
     public Account signin(String username, String password){

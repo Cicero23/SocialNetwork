@@ -66,6 +66,10 @@ public class ControllerUtilizator extends Observer {
     Text last_name_text;
 
     @FXML
+    Label label_current_tab;
+
+
+    @FXML
     private void initialize() {
 
         //utilizatorService.getAll().forEach(x->listUsers.add(x));
@@ -369,6 +373,7 @@ public class ControllerUtilizator extends Observer {
 
         friends_layout.setDisable(false);
         friends_layout.setVisible(true);
+        label_current_tab.setText("Friends");
     }
     @FXML
     public void moveTousers(){
@@ -379,7 +384,7 @@ public class ControllerUtilizator extends Observer {
 
         users_layout.setDisable(false);
         users_layout.setVisible(true);
-
+        label_current_tab.setText("Users");
     }
     @FXML
     public void moveTorequests(){
@@ -387,12 +392,36 @@ public class ControllerUtilizator extends Observer {
         friends_layout.setVisible(false);
         users_layout.setDisable(true);
         users_layout.setVisible(false);
+
         requests_layout.setDisable(false);
         requests_layout.setVisible(true);
-
+        label_current_tab.setText("Requests");
 
     }
 
+
+    @FXML
+    public void handleActionHistoryButton(){
+        try {
+            FXMLLoader actionLoader = new FXMLLoader();
+            actionLoader.setLocation(getClass().getResource("/views/actionsView.fxml"));
+            ControllerActionHistory controllerActionHistory =  new ControllerActionHistory();
+            controllerActionHistory.setService(utilizatorService,id_sign_inUtil);
+            actionLoader.setController(controllerActionHistory);
+            Stage stage = new Stage();
+            AnchorPane actionLayout = actionLoader.load();
+            Scene scene =new Scene(actionLayout);
+
+            stage.setScene(scene);
+
+            stage.show();
+
+        }
+        catch (IOException e){
+            System.out.println("ceva");
+            e.printStackTrace();
+        }
+    }
 
     @Override
     public void update() {

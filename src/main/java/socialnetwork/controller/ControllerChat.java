@@ -9,6 +9,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.text.Text;
+import socialnetwork.domain.Utilizator;
 import socialnetwork.service.UtilizatorService;
 import socialnetwork.utils.observer.Observer;
 
@@ -27,6 +29,9 @@ public class ControllerChat extends Observer {
     Button btn_sendMessage;
     @FXML
     TextField messageField;
+    @FXML
+    Text userText;
+
 
     ObservableList<Label> msg_listView = FXCollections.observableArrayList();
 
@@ -34,6 +39,8 @@ public class ControllerChat extends Observer {
 
     @FXML
     private void initialize() {
+        Utilizator utilizator =utilizatorService.getOne(id_to);
+        userText.setText(utilizator.getFirstName() + " " + utilizator.getLastName());
         loadMessages();
     }
 
