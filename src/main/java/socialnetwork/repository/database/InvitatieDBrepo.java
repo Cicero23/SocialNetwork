@@ -107,8 +107,33 @@ public class InvitatieDBrepo implements Repository<Long, Invitatie> {
     }
 
     @Override
-    public Invitatie delete(Long aLong) {
-        return null;
+    public Invitatie delete(Long id) {
+        try(
+                Connection connection = DriverManager.getConnection(url,username,password);
+        ){
+            String sqlSelect = "SELECT * FROM invitatie WHERE id_invitatie = ?";
+            PreparedStatement statementSelectMessage = connection.prepareStatement(sqlSelect);
+            statementSelectMessage.setLong(1,id);
+            ResultSet resultSet = statementSelectMessage.executeQuery();
+            if(resultSet.next()){
+                Long id1 = resultSet.getLong("id_invitatie");
+                Long from = resultSet.getLong("id_from");
+                Long to = resultSet.getLong("id_to");
+                LocalDate ld = resultSet.getDate("data").toLocalDate();
+                Integer stare = resultSet.getInt("stare");
+                Invitatie invitatie=  new Invitatie(from,to,ld,stare);
+                invitatie.setId(id1);
+                String sqlDelete = "DELETE FROM invitatie WHERE id_invitatie= ?";
+                PreparedStatement statementDelete = connection.prepareStatement(sqlDelete);
+                statementDelete.setLong(1, id);
+                statementDelete.executeUpdate();
+                return  invitatie;
+            }
+            return null;
+        }
+        catch (SQLException e) {
+            return null;
+        }
     }
 
     @Override

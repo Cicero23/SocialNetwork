@@ -2,32 +2,37 @@ package socialnetwork.service;
 
 import socialnetwork.domain.*;
 import socialnetwork.repository.Repository;
+import socialnetwork.repository.database.AccountDBrepo;
 import socialnetwork.repository.factory.Factory;
-import socialnetwork.repository.factory.FactoryPrietenie;
-import socialnetwork.repository.factory.FactoryUtiliziator;
+import socialnetwork.utils.observer.Observable;
+import socialnetwork.utils.observer.Observer;
 
-
+import javax.swing.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.chrono.ChronoLocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-public class UtilizatorService  {
+public class UtilizatorService extends Observable{
     private Repository<Long, Utilizator> repoUtilizatori;
     private Repository<Tuple<Long, Long>, Prietenie> repoPrietenii;
     private Repository<Long, Message> repoMessage;
     private Repository<Long, Invitatie> repoInvitatie;
+    private AccountDBrepo repoAccount;
     Factory<Long,Utilizator> utilizatorFactory;
     Factory<Tuple<Long,Long>,Prietenie> prietenieFactory;
     private static int l= -1;
-    public UtilizatorService(Repository<Long, Utilizator> repoUtilizatori, Repository<Tuple<Long, Long>, Prietenie> repoPrietenii, Factory<Long,Utilizator> utilizatorFactory, Factory<Tuple<Long,Long>,Prietenie> prietenieFactory, Repository<Long, Message> repoMessage, Repository<Long, Invitatie> repoInvitatie) {
+    public UtilizatorService(Repository<Long, Utilizator> repoUtilizatori, Repository<Tuple<Long, Long>, Prietenie> repoPrietenii, Factory<Long,Utilizator> utilizatorFactory, Factory<Tuple<Long,Long>,Prietenie> prietenieFactory, Repository<Long, Message> repoMessage, Repository<Long, Invitatie> repoInvitatie,AccountDBrepo repoAccount) {
+        super();
         this.repoUtilizatori = repoUtilizatori;
         this.repoPrietenii = repoPrietenii;
         this.utilizatorFactory = utilizatorFactory;
         this.prietenieFactory = prietenieFactory;
         this.repoMessage = repoMessage;
         this.repoInvitatie = repoInvitatie;
+        this.repoAccount = repoAccount;
         uniteRepo();
     }
 
@@ -53,6 +58,9 @@ public class UtilizatorService  {
     public Utilizator addUtilizator(String s) {
         Utilizator utilizator = utilizatorFactory.extractEntity(s);
         Utilizator task = repoUtilizatori.save(utilizator);
+        if(task == null){
+            notifyObservers();
+        }
         return task;
     }
 
@@ -64,6 +72,7 @@ public class UtilizatorService  {
                 repoPrietenii.delete(new Tuple<Long, Long>(x.getId(), id));
                 repoPrietenii.delete(new Tuple<Long, Long>(id, x.getId()));
             });
+            notifyObservers();
         }
         return task;
     }
@@ -83,20 +92,38 @@ public class UtilizatorService  {
             Utilizator u2 = repoUtilizatori.findOne(pr.getId().getRight());
             u1.addFriend(u2);
             u2.addFriend(u1);
+            notifyObservers();
         }
         return task;
     }
 
     public Prietenie removePrietenie(Tuple<Long,Long> id) {
+
         Prietenie task = repoPrietenii.delete(id);
         if(task != null) {
             Utilizator u1 = repoUtilizatori.findOne(task.getId().getLeft());
             Utilizator u2 = repoUtilizatori.findOne(task.getId().getRight());
             u1.removeFriend(u2);
             u2.removeFriend(u1);
+            StreamSupport.stream(repoInvitatie.findAll().spliterator(), false)
+                    .filter(x->{
+                        return x.getId_from()== id.getRight() && x.getId_to() == id.getLeft() || x.getId_from()== id.getLeft() && x.getId_to() == id.getRight();
+                    })
+                    .forEach(x-> {
+                        System.out.println(x.getStare());
+                        repoInvitatie.delete(x.getId());
+                    });
+
+            notifyObservers();
+
         }
         return task;
     }
+
+    public Prietenie getPrietenie(Tuple<Long,Long> id){
+        return  repoPrietenii.findOne(id);
+    }
+
     ///TO DO: add othemethods
 
     private List<Comunitate> createComunitati(){
@@ -226,9 +253,10 @@ public class UtilizatorService  {
                                 data = pr.getDate();
                             }
                             else{
-                                data = repoPrietenii.findOne(new Tuple<>(y.getId(),id)).getDate();
+                                pr = repoPrietenii.findOne(new Tuple<>(y.getId(),id));
+                                data = pr.getDate();
                             }
-                            return new PrietenDTO(y.getFirstName(),y.getLastName(),data);
+                            return new PrietenDTO(y.getFirstName(),y.getLastName(),data,pr.getId());
                         }).collect(Collectors.toList());
             }
             else
@@ -247,15 +275,20 @@ public class UtilizatorService  {
                             data = pr.getDate();
                         }
                         else{
-                            data = repoPrietenii.findOne(new Tuple<>(y.getId(),id)).getDate();
+                            pr = repoPrietenii.findOne(new Tuple<>(y.getId(),id));
+                            data = pr.getDate();
                         }
-                        return new PrietenDTO(y.getFirstName(),y.getLastName(),data);
+                        return new PrietenDTO(y.getFirstName(),y.getLastName(),data,pr.getId());
                     })
                     .filter(y->y.getData().getMonthValue()==luna)
                     .collect(Collectors.toList());
         }
         else
             return  null;
+    }
+
+    public Utilizator getOne(Long id){
+        return repoUtilizatori.findOne(id);
     }
 
     public Iterable<Message> getConversatie(long id1, long id2) {
@@ -284,7 +317,10 @@ public class UtilizatorService  {
     public Message sendMessage(long from, LocalDateTime data, List<Long> dest, String mesaj){
         Message msg = new Message(from,data,mesaj);
         msg.setTo(dest);
-        return repoMessage.save(msg);
+        notifyObservers();
+        msg = repoMessage.save(msg);
+        notifyObservers();
+        return msg;
     }
     public Message replayMessage(long id_msg,long from, LocalDateTime data,String mesaj){
         Message msg = repoMessage.findOne(id_msg);
@@ -294,7 +330,9 @@ public class UtilizatorService  {
                 to.add(msg.getFrom());
                 Message replay = new ReplayMessage(from,data,mesaj,msg);
                 replay.setTo(to);
-                return repoMessage.save(replay);
+                msg = repoMessage.save(replay);
+                notifyObservers();
+                return msg;
             }
         }
         return msg;
@@ -303,8 +341,10 @@ public class UtilizatorService  {
     public Invitatie sendInvidatie(long id_from,long id_to){
         if(repoPrietenii.findOne(new Tuple<>(id_from,id_to)) == null && repoPrietenii.findOne(new Tuple<>(id_to,id_from)) == null){
             Invitatie invitatie = new Invitatie(id_from,id_to,LocalDate.now(),1);
-            if(repoInvitatie.save(invitatie) == null)
+            if(repoInvitatie.save(invitatie) == null) {
+                notifyObservers();
                 return invitatie;
+            }
             else
                 return null;
 
@@ -321,6 +361,12 @@ public class UtilizatorService  {
                 .collect(Collectors.toList());
     }
 
+    public Iterable<Invitatie> getInvitatiiTrimise(long id_user){
+        return StreamSupport.stream(repoInvitatie.findAll().spliterator(), false)
+                .filter(x->x.getId_from()==id_user)
+                .collect(Collectors.toList());
+    }
+
 
     public Invitatie acceptInvitatie(long id_user,long id_invitatie){
         Invitatie inv = repoInvitatie.findOne(id_invitatie);
@@ -331,6 +377,11 @@ public class UtilizatorService  {
                 Prietenie pr = new Prietenie(LocalDate.now());
                 pr.setId(new Tuple<>(inv.getId_from(),inv.getId_to()));
                 repoPrietenii.save(pr);
+                Utilizator u1 = repoUtilizatori.findOne(pr.getId().getLeft());
+                Utilizator u2 = repoUtilizatori.findOne(pr.getId().getRight());
+                u1.addFriend(u2);
+                u2.addFriend(u1);
+                notifyObservers();
                 return  inv;
             }
             else{
@@ -346,6 +397,7 @@ public class UtilizatorService  {
             if(inv.getId_to() == id_user && inv.getStare() == 1){
                 inv.setStare(2);
                 repoInvitatie.update(inv);
+                notifyObservers();
                 return  inv;
             }
             else{
@@ -355,4 +407,78 @@ public class UtilizatorService  {
         return null;
     }
 
+    public boolean isApendingRequest(Long id1, Long id2){
+        List<Invitatie> l = StreamSupport.stream(repoInvitatie.findAll().spliterator(), false)
+                .filter(x->{
+                    return (x.getId_to()==id1 && x.getId_from() == id2) || (x.getId_from() == id1 && x.getId_to() == id2) && x.getStare()!=3;
+                }).collect(Collectors.toList());
+        if(l.size() == 0 ) return false;
+        return true;
+    }
+
+    public Invitatie removeInvitatie(Long id){
+        Invitatie invitatie = repoInvitatie.delete(id);
+        notifyObservers();
+        return  invitatie;
+    }
+
+    public List<ActionDTO> getActionsDuringPeriod(Long id, LocalDate a, LocalDate b){
+        List<ActionDTO> ans= new ArrayList<>();
+
+        repoPrietenii.findAll().forEach(x->{
+            if(x.getId().getLeft() == id){
+                Utilizator utilizator = repoUtilizatori.findOne(x.getId().getRight());
+                String s = "New Friend: " + utilizator.getFirstName() + " " + utilizator.getLastName();
+                ans.add(new ActionDTO(s,x.getDate()));
+
+            }
+            if(x.getId().getRight() == id){
+                Utilizator utilizator = repoUtilizatori.findOne(x.getId().getLeft());
+                String s = "New Friend: " + utilizator.getFirstName() + " " + utilizator.getLastName();
+                ans.add(new ActionDTO(s,x.getDate()));
+
+            }
+
+
+        });
+
+
+        repoMessage.findAll().forEach(x-> {
+            for (Long y : x.getTo()) {
+                if (y == id) {
+                    Utilizator utilizator = repoUtilizatori.findOne(x.getFrom());
+                    String s = "Message from " + utilizator.getFirstName() + " " + utilizator.getLastName() + ": " + x.getMesaj();
+                    ans.add(new ActionDTO(s,x.getData().toLocalDate()));
+                    break;
+                }
+            }
+        });
+
+
+        return  ans.stream().filter(x->{
+            return x.getDate().isBefore(ChronoLocalDate.from(b)) && x.getDate().isAfter(ChronoLocalDate.from(a));
+        }).sorted(Comparator.comparing(ActionDTO::getDate)).collect(Collectors.toList());
+    }
+
+
+    public Account signin(String username, String password){
+        return repoAccount.findOne(username,password);
+    }
+
+    private List<Observer> observers = new ArrayList<Observer>();
+
+    @Override
+    public void addObserver(Observer e) {
+        observers.add(e);
+    }
+
+    @Override
+    public void removeObserver(Observer e) {
+        observers.remove(e);
+    }
+
+    @Override
+    public void notifyObservers() {
+        observers.stream().forEach(x->x.update());
+    }
 }

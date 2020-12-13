@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #ffffff;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="views.UsersBoxList">
+   <children>
+      <Pane layoutX="40.0" layoutY="120.0" prefHeight="80.0" prefWidth="520.0" style="-fx-border-color: #585858; -fx-border-width: 2 0 0 0;">
+         <children>
+            <ImageView fitHeight="50.0" fitWidth="50.0" layoutX="6.0" layoutY="15.0">
+               <image>
+                  <Image url="@../others/user52x50.png" />
+               </image>
+            </ImageView>
+            <Label layoutX="62.0" layoutY="14.0" prefHeight="50.0" prefWidth="276.0" text="Anamaria Vasileascu">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font></Label>
+            <Button layoutX="399.0" layoutY="12.0" mnemonicParsing="false" style="-fx-background-color: #ffffff;" />
+            <Button layoutX="460.0" layoutY="14.0" mnemonicParsing="false" style="-fx-background-color: #ffffff;" />
+         </children></Pane>
+      <Pane layoutX="40.0" layoutY="200.0" prefHeight="80.0" prefWidth="520.0" style="-fx-border-color: #585858; -fx-border-width: 2 0 0 0;">
+         <children>
+            <Label layoutX="62.0" layoutY="14.0" prefHeight="50.0" prefWidth="276.0" text="Anamaria Vasileascu">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+            </Label>
+            <Pane layoutX="6.0" layoutY="15.0" prefHeight="50.0" prefWidth="50.0">
+               <children>
+                  <ImageView fitHeight="50.0" fitWidth="50.0">
+                     <image>
+                        <Image url="@../others/user52x50.png" />
+                     </image>
+                  </ImageView>
+               </children>
+            </Pane>
+            <Button layoutX="399.0" layoutY="12.0" mnemonicParsing="false" style="-fx-background-color: #ffffff;">
+               <graphic>
+                  <ImageView fitHeight="45.0" fitWidth="45.0">
+                     <image>
+                        <Image url="@../others/friend50x50.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button layoutX="460.0" layoutY="14.0" mnemonicParsing="false" style="-fx-background-color: #ffffff;">
+               <graphic>
+                  <ImageView fitHeight="40.0" fitWidth="40.0">
+                     <image>
+                        <Image url="@../others/chat42x40.jpg" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+         </children>
+      </Pane>
+      <Pane layoutX="40.0" layoutY="280.0" prefHeight="80.0" prefWidth="520.0" style="-fx-border-color: #585858; -fx-border-width: 2 0 0 0;">
+         <children>
+            <Label layoutX="62.0" layoutY="14.0" prefHeight="50.0" prefWidth="276.0" text="Anamaria Vasileascu">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+            </Label>
+            <Pane layoutX="6.0" layoutY="15.0" prefHeight="50.0" prefWidth="50.0">
+               <children>
+                  <ImageView fitHeight="50.0" fitWidth="50.0">
+                     <image>
+                        <Image url="@../others/user52x50.png" />
+                     </image>
+                  </ImageView>
+               </children>
+            </Pane>
+            <Button layoutX="399.0" layoutY="12.0" mnemonicParsing="false" style="-fx-background-color: #ffffff;">
+               <graphic>
+                  <ImageView fitHeight="45.0" fitWidth="45.0">
+                     <image>
+                        <Image url="@../others/friend50x50.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button layoutX="460.0" layoutY="14.0" mnemonicParsing="false" style="-fx-background-color: #ffffff;">
+               <graphic>
+                  <ImageView fitHeight="40.0" fitWidth="40.0">
+                     <image>
+                        <Image url="@../others/chat42x40.jpg" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+         </children>
+      </Pane>
+   </children>
+</AnchorPane>

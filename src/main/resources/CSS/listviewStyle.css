@@ -1,0 +1,102 @@
+.list-view .list-cell:even {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #585858;
+    -fx-pref-height: 80;
+    -fx-border-width: 2 0 0 0;
+    -fx-text-fill: black;
+}
+.list-view .list-cell:odd {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #585858;
+    -fx-pref-height: 80;
+    -fx-border-width: 2 0 0 0;
+    -fx-text-fill: black;
+}
+
+.imgUser-list{
+    -fx-pref-height: 50;
+    -fx-pref-width: 50;
+
+}
+.textUser-list{
+    -fx-font-size: 18;
+    -fx-pref-height: 50;
+    -fx-font-weight: bold;
+}
+
+.btnChatUser-list{
+    -fx-background-color: #ffffff;
+    -fx-pref-height: 48;
+    -fx-pref-width: 56;
+    -fx-background-image: url("/others/chat42x40.jpg");
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: auto;
+}
+
+.btnFriendUser-list{
+    -fx-background-color: #ffffff;
+    -fx-pref-height: 50;
+    -fx-pref-width: 50;
+    -fx-background-image: url("/others/friend50x50.png");
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: auto;
+}
+
+.textFriend-list{
+    -fx-font-size: 18;
+    -fx-pref-height: 50;
+    -fx-font-weight: bold;
+}
+
+.textDateFriend-list{
+    -fx-font-size: 16;
+    -fx-pref-height: 40;
+    -fx-font-weight: bold;
+}
+
+.btnRemoveFriend-list{
+    -fx-background-color: #ffffff;
+    -fx-pref-height: 40;
+    -fx-pref-width: 40;
+    -fx-background-image: url("/others/remove32px.png");
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: auto;
+}
+
+.textRequest-list{
+    -fx-font-size: 18;
+    -fx-pref-height: 50;
+    -fx-font-weight: bold;
+}
+
+.textTypeRequest-list{
+    -fx-font-size: 16;
+    -fx-pref-height: 40;
+    -fx-font-weight: bold;
+}
+
+.btnAproveRequest-list{
+    -fx-background-color: #ffffff;
+    -fx-pref-height: 40;
+    -fx-pref-width: 40;
+    -fx-background-image: url("/others/aprove.png");
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: auto;
+}
+
+.btnDenyRequest-list{
+    -fx-background-color: #ffffff;
+    -fx-pref-height: 40;
+    -fx-pref-width: 40;
+    -fx-background-image: url("/others/deny32px.png");
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: auto;
+}
+.btnDeleteRequest-list{
+    -fx-background-color: #ffffff;
+    -fx-pref-height: 40;
+    -fx-pref-width: 40;
+    -fx-background-image: url("/others/delete.png");
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: auto;
+}
