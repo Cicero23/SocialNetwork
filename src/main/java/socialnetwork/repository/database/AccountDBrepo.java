@@ -20,8 +20,6 @@ public class AccountDBrepo{
         this.password = password;
     }
 
-
-
     public Account findOne(String username1,String password1) {
         try(
                 Connection connection = DriverManager.getConnection(url,username,password);
@@ -45,26 +43,42 @@ public class AccountDBrepo{
         }
     }
 
-    /*
-    public AccountDBrepo save(AccountDBrepo entity) {
+
+    public Account save(String username1, String password1) {
         try(
                 Connection connection = DriverManager.getConnection(url,username,password);
         ){
 
-            String sqlInsert = "INSERT INTO account(username, password) VALUES (?, ?, ?, ?)";
+            String sqlInsert = "INSERT INTO accounts(username, password) VALUES (?, ?)";
             PreparedStatement statementInsert = connection.prepareStatement(sqlInsert);
-            statementInsert.setLong(1, entity.getId_from());
-            statementInsert.setLong(2, entity.getId_to());
-            statementInsert.setObject(3, entity.getData());
-            statementInsert.setLong(4, entity.getStare());
+            statementInsert.setString(1,username1);
+            statementInsert.setString(2, password1);
+            System.out.println(statementInsert.toString());
             statementInsert.executeUpdate();
             return null;
 
         }
         catch (SQLException ex){
-            return entity;
+            return new Account(username,password,-1);
         }
     }
-    */
+
+    public Account update(String username1, long id_user){
+        try(
+                Connection connection = DriverManager.getConnection(url,username,password);
+        ){
+
+            String sqlInsert = "UPDATE accounts SET id_user = ? WHERE username = ?";
+            PreparedStatement statementInsert = connection.prepareStatement(sqlInsert);
+            statementInsert.setLong(1,id_user);
+            statementInsert.setString(2,username1);
+            statementInsert.executeUpdate();
+            return null;
+
+        }
+        catch (SQLException ex){
+            return new Account(username,password,id_user);
+        }
+    }
 
 }

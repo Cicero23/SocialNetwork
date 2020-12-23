@@ -68,20 +68,20 @@ public class UsersDBrepo extends InMemoryRepository<Long,Utilizator> {
                     Long id = resultSet.getLong("id");
                     entity.setId(id);
                     Utilizator e = super.save(entity);
-                    return e;
+                    return entity;
                 }
 
-                return entity;
+                return null;
             }
             catch (SQLException e) {
-                return entity;
+                return null;
 
             }
         }
         catch (SQLException ex){
             ex.printStackTrace();
         }
-        return entity;
+        return null;
     }
 
     @Override

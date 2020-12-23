@@ -3,11 +3,14 @@ package socialnetwork.service;
 import socialnetwork.domain.*;
 import socialnetwork.repository.Repository;
 import socialnetwork.repository.database.AccountDBrepo;
+import socialnetwork.repository.database.EventsDBrepo;
 import socialnetwork.repository.factory.Factory;
+import socialnetwork.utils.events.EntityEventType;
+import socialnetwork.utils.events.EventType;
 import socialnetwork.utils.observer.Observable;
 import socialnetwork.utils.observer.Observer;
+import socialnetwork.utils.events.EventForOb;
 
-import javax.swing.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.chrono.ChronoLocalDate;
@@ -21,10 +24,11 @@ public class UtilizatorService extends Observable{
     private Repository<Long, Message> repoMessage;
     private Repository<Long, Invitatie> repoInvitatie;
     private AccountDBrepo repoAccount;
+    private EventsDBrepo repoEvents;
     Factory<Long,Utilizator> utilizatorFactory;
     Factory<Tuple<Long,Long>,Prietenie> prietenieFactory;
     private static int l= -1;
-    public UtilizatorService(Repository<Long, Utilizator> repoUtilizatori, Repository<Tuple<Long, Long>, Prietenie> repoPrietenii, Factory<Long,Utilizator> utilizatorFactory, Factory<Tuple<Long,Long>,Prietenie> prietenieFactory, Repository<Long, Message> repoMessage, Repository<Long, Invitatie> repoInvitatie,AccountDBrepo repoAccount) {
+    public UtilizatorService(Repository<Long, Utilizator> repoUtilizatori, Repository<Tuple<Long, Long>, Prietenie> repoPrietenii, Factory<Long,Utilizator> utilizatorFactory, Factory<Tuple<Long,Long>,Prietenie> prietenieFactory, Repository<Long, Message> repoMessage, Repository<Long, Invitatie> repoInvitatie,AccountDBrepo repoAccount,EventsDBrepo repoEvents) {
         super();
         this.repoUtilizatori = repoUtilizatori;
         this.repoPrietenii = repoPrietenii;
@@ -33,6 +37,7 @@ public class UtilizatorService extends Observable{
         this.repoMessage = repoMessage;
         this.repoInvitatie = repoInvitatie;
         this.repoAccount = repoAccount;
+        this.repoEvents = repoEvents;
         uniteRepo();
     }
 
@@ -58,8 +63,8 @@ public class UtilizatorService extends Observable{
     public Utilizator addUtilizator(String s) {
         Utilizator utilizator = utilizatorFactory.extractEntity(s);
         Utilizator task = repoUtilizatori.save(utilizator);
-        if(task == null){
-            notifyObservers();
+        if(task != null){
+            //notifyObservers();
         }
         return task;
     }
@@ -72,7 +77,7 @@ public class UtilizatorService extends Observable{
                 repoPrietenii.delete(new Tuple<Long, Long>(x.getId(), id));
                 repoPrietenii.delete(new Tuple<Long, Long>(id, x.getId()));
             });
-            notifyObservers();
+            //notifyObservers();
         }
         return task;
     }
@@ -92,7 +97,7 @@ public class UtilizatorService extends Observable{
             Utilizator u2 = repoUtilizatori.findOne(pr.getId().getRight());
             u1.addFriend(u2);
             u2.addFriend(u1);
-            notifyObservers();
+            notifyObservers(new EventForOb(EntityEventType.FRIEND, EventType.ADD));
         }
         return task;
     }
@@ -114,7 +119,7 @@ public class UtilizatorService extends Observable{
                         repoInvitatie.delete(x.getId());
                     });
 
-            notifyObservers();
+            notifyObservers(new EventForOb(EntityEventType.FRIEND,EventType.REMOVE));
 
         }
         return task;
@@ -124,7 +129,7 @@ public class UtilizatorService extends Observable{
         return  repoPrietenii.findOne(id);
     }
 
-    ///TO DO: add othemethods
+
 
     private List<Comunitate> createComunitati(){
         Map<Long,Long> com = new HashMap<Long, Long>();
@@ -317,9 +322,8 @@ public class UtilizatorService extends Observable{
     public Message sendMessage(long from, LocalDateTime data, List<Long> dest, String mesaj){
         Message msg = new Message(from,data,mesaj);
         msg.setTo(dest);
-        notifyObservers();
         msg = repoMessage.save(msg);
-        notifyObservers();
+        notifyObservers(new EventForOb(EntityEventType.MESSAGE,EventType.ADD));
         return msg;
     }
     public Message replayMessage(long id_msg,long from, LocalDateTime data,String mesaj){
@@ -331,7 +335,7 @@ public class UtilizatorService extends Observable{
                 Message replay = new ReplayMessage(from,data,mesaj,msg);
                 replay.setTo(to);
                 msg = repoMessage.save(replay);
-                notifyObservers();
+                notifyObservers(new EventForOb(EntityEventType.MESSAGE,EventType.ADD));
                 return msg;
             }
         }
@@ -342,7 +346,7 @@ public class UtilizatorService extends Observable{
         if(repoPrietenii.findOne(new Tuple<>(id_from,id_to)) == null && repoPrietenii.findOne(new Tuple<>(id_to,id_from)) == null){
             Invitatie invitatie = new Invitatie(id_from,id_to,LocalDate.now(),1);
             if(repoInvitatie.save(invitatie) == null) {
-                notifyObservers();
+                notifyObservers(new EventForOb(EntityEventType.REQUEST,EventType.ADD));
                 return invitatie;
             }
             else
@@ -381,7 +385,7 @@ public class UtilizatorService extends Observable{
                 Utilizator u2 = repoUtilizatori.findOne(pr.getId().getRight());
                 u1.addFriend(u2);
                 u2.addFriend(u1);
-                notifyObservers();
+                notifyObservers(new EventForOb(EntityEventType.REQUEST,EventType.UPDATE) );
                 return  inv;
             }
             else{
@@ -397,7 +401,7 @@ public class UtilizatorService extends Observable{
             if(inv.getId_to() == id_user && inv.getStare() == 1){
                 inv.setStare(2);
                 repoInvitatie.update(inv);
-                notifyObservers();
+                notifyObservers(new EventForOb(EntityEventType.REQUEST,EventType.UPDATE) );
                 return  inv;
             }
             else{
@@ -410,7 +414,7 @@ public class UtilizatorService extends Observable{
     public boolean isApendingRequest(Long id1, Long id2){
         List<Invitatie> l = StreamSupport.stream(repoInvitatie.findAll().spliterator(), false)
                 .filter(x->{
-                    return (x.getId_to()==id1 && x.getId_from() == id2) || (x.getId_from() == id1 && x.getId_to() == id2) && x.getStare()!=3;
+                    return ((x.getId_to()==id1 && x.getId_from() == id2) || (x.getId_from() == id1 && x.getId_to() == id2)) && x.getStare()!=3;
                 }).collect(Collectors.toList());
         if(l.size() == 0 ) return false;
         return true;
@@ -418,7 +422,7 @@ public class UtilizatorService extends Observable{
 
     public Invitatie removeInvitatie(Long id){
         Invitatie invitatie = repoInvitatie.delete(id);
-        notifyObservers();
+        notifyObservers(new EventForOb(EntityEventType.REQUEST,EventType.REMOVE) );
         return  invitatie;
     }
 
@@ -465,6 +469,54 @@ public class UtilizatorService extends Observable{
         return repoAccount.findOne(username,password);
     }
 
+    public Account register(String username, String password, String first_name, String last_name){
+        if(repoAccount.save(username, password)== null){
+            Utilizator utilizator = repoUtilizatori.save(new Utilizator(first_name, last_name));
+            if( utilizator != null){
+                if(repoAccount.update(username,utilizator.getId()) == null)
+                {
+                    return null;
+                }
+
+
+            }
+        }
+        return new Account(username,password,-1);
+    }
+
+    public Iterable<Event> getAllEvents(){
+        return repoEvents.findAll();
+    }
+
+    public void addParticipant(Long idP, Long idE){
+        repoEvents.savePart(idP, idE);
+
+    }
+    public Event createEvent(String name, String desc, LocalDateTime date){
+        return repoEvents.save(new Event(name,desc,date));
+    }
+
+
+    public List<Message> getMessagesFromTimeInterval(Long id_from,Long id_to, LocalDate a, LocalDate b){
+        List<Message> ans = new ArrayList<>();
+        repoMessage.findAll().forEach(x-> {
+            if (x.getFrom() == id_from) {
+                for (Long y : x.getTo()) {
+                    if (y == id_to) {
+                        ans.add(x);
+
+                        break;
+                    }
+                }
+            }
+        });
+
+
+        return ans.stream().filter(x->{
+            return x.getData().toLocalDate().isBefore(ChronoLocalDate.from(b)) && x.getData().toLocalDate().isAfter(ChronoLocalDate.from(a));
+        }).sorted(Comparator.comparing(Message::getData)).collect(Collectors.toList());
+    }
+
     private List<Observer> observers = new ArrayList<Observer>();
 
     @Override
@@ -478,7 +530,7 @@ public class UtilizatorService extends Observable{
     }
 
     @Override
-    public void notifyObservers() {
-        observers.stream().forEach(x->x.update());
+    public void notifyObservers(EventForOb x) {
+        observers.stream().forEach(y->y.update(x));
     }
 }

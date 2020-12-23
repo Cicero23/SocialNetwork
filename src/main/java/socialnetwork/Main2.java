@@ -25,8 +25,8 @@ public class Main2 {
         Repository<Long, Message> messageDBrepository = new MessageDBRepo(url, username,password);
         Repository<Long, Invitatie> invitatieDBrepository = new InvitatieDBrepo(url, username,password);
         AccountDBrepo accountDBrepo = new AccountDBrepo(url,username,password);
-        UtilizatorService utilizatorService  = new UtilizatorService(usersDBrepo,prieteniiDBrepo,new FactoryUtilizatorDB(" "),new FactoryPrietenie(" "), messageDBrepository,invitatieDBrepository,accountDBrepo);
-        UiSimplu uiSimplu = new UiSimplu(utilizatorService);
-        uiSimplu.run();
+        //UtilizatorService utilizatorService  = new UtilizatorService(usersDBrepo,prieteniiDBrepo,new FactoryUtilizatorDB(" "),new FactoryPrietenie(" "), messageDBrepository,invitatieDBrepository,accountDBrepo);
+        //UiSimplu uiSimplu = new UiSimplu(utilizatorService);
+        //uiSimplu.run();
     }
 }

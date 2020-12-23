@@ -35,13 +35,18 @@
                <children>
                   <ListView fx:id="friends_listView" prefHeight="400.0" prefWidth="520.0" style="-fx-background-color: #ffffff;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                </children></AnchorPane>
-            <AnchorPane fx:id="requests_layout" disable="true" layoutY="160.0" prefHeight="640.0" prefWidth="540.0" style="-fx-background-color: #ffffff;" visible="false">
+            <AnchorPane fx:id="requests_layout" disable="true" layoutY="180.0" prefHeight="620.0" prefWidth="540.0" style="-fx-background-color: #ffffff;" visible="false">
                <children>
                   <ListView fx:id="requests_listView" prefHeight="400.0" prefWidth="520.0" style="-fx-background-color: #ffffff;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                </children></AnchorPane>
-            <AnchorPane fx:id="users_layout" layoutY="160.0" prefHeight="640.0" prefWidth="540.0" style="-fx-background-color: #ffffff;">
+            <AnchorPane fx:id="users_layout" layoutY="180.0" prefHeight="620.0" prefWidth="540.0" style="-fx-background-color: #ffffff;">
                <children>
-                  <ListView fx:id="users_listView" prefHeight="437.0" prefWidth="520.0" style="-fx-background-color: #ffffff;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                  <ListView fx:id="users_listView" prefHeight="400.0" prefWidth="520.0" style="-fx-background-color: #ffffff;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+               </children>
+            </AnchorPane>
+            <AnchorPane fx:id="events_layout" disable="true" layoutY="180.0" prefHeight="620.0" prefWidth="540.0" style="-fx-background-color: #ffffff;" visible="false">
+               <children>
+                  <ListView fx:id="events_listView" prefHeight="400.0" prefWidth="520.0" style="-fx-background-color: #ffffff;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                </children>
             </AnchorPane>
          </children>
@@ -91,6 +96,15 @@
             <Pane fx:id="requests_button" layoutY="301.0" onMouseClicked="#moveTorequests" prefHeight="50.0" prefWidth="260.0" style="-fx-background-color: none;">
                <children>
                   <Label layoutX="60.0" layoutY="14.0" text="Requests" textFill="WHITE">
+                     <font>
+                        <Font name="Arial Bold" size="20.0" />
+                     </font>
+                  </Label>
+               </children>
+            </Pane>
+            <Pane fx:id="events_button" layoutY="351.0" onMouseClicked="#moveToevents" prefHeight="50.0" prefWidth="260.0" style="-fx-background-color: none;">
+               <children>
+                  <Label layoutX="60.0" layoutY="14.0" text="Events" textFill="WHITE">
                      <font>
                         <Font name="Arial Bold" size="20.0" />
                      </font>

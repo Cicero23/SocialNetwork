@@ -24,6 +24,9 @@ import javafx.stage.Stage;
 import socialnetwork.domain.*;
 import socialnetwork.repository.database.PrieteniiDBrepo;
 import socialnetwork.service.UtilizatorService;
+import socialnetwork.utils.events.EntityEventType;
+import socialnetwork.utils.events.EventForOb;
+import socialnetwork.utils.events.EventType;
 import socialnetwork.utils.observer.Observer;
 
 import java.awt.*;
@@ -67,14 +70,13 @@ public class ControllerUtilizator extends Observer {
 
     @FXML
     Label label_current_tab;
-
+    @FXML
+    AnchorPane events_layout;
+    @FXML
+    ListView events_listView;
 
     @FXML
     private void initialize() {
-
-        //utilizatorService.getAll().forEach(x->listUsers.add(x));
-       // utilizatorService.getPrieteni(id_sign_inUtil).forEach(x->listFriends.add(x));
-        //utilizatorService.getInvitatiiPrimite(id_sign_inUtil).forEach(x->listRequests.add(x));
         initModel();
         Utilizator x = utilizatorService.getOne(id_sign_inUtil);
         first_name_text.setText(x.getFirstName());
@@ -86,79 +88,18 @@ public class ControllerUtilizator extends Observer {
         loadUsers();
         loadFriends();
         loadRequests();
+        loadEvents();
     }
 
     private void loadUsers(){
         listUsersBox.clear();
         utilizatorService.getAll().forEach(x->{
             if(x.getId()!= id_sign_inUtil) {
-                Pane util = new Pane();
-
-                //imaginea
-                ImageView imgV =  new ImageView();
-                Image image = new Image("others/user52x50.png");
-                imgV.setImage(image);
-                imgV.setLayoutX(6);
-                imgV.setLayoutY(15);
-                util.getChildren().add(imgV);
-
-                //numele utilizator
-                Label textLabel = new Label(x.getFirstName() + " " + x.getLastName());
-                textLabel.getStyleClass().add("textUser-list");
-                textLabel.setLayoutX(62);
-                textLabel.setLayoutY(14);
-                util.getChildren().add(textLabel);
-
-                //btn chat
-                Button btnChat = new Button();
-                btnChat.getStyleClass().add("btnChatUser-list");
-                btnChat.setLayoutX(460);
-                btnChat.setLayoutY(14);
-                btnChat.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        try {
-                            FXMLLoader chatLoader = new FXMLLoader();
-                            chatLoader.setLocation(getClass().getResource("/views/chatView.fxml"));
-                            ControllerChat controllerChat = new ControllerChat();
-                            controllerChat.setService(utilizatorService,id_sign_inUtil,x.getId());
-                            chatLoader.setController(controllerChat);
-                            Stage stage = new Stage();
-                            AnchorPane chatLayout = chatLoader.load();
-
-                            Scene scene =new Scene(chatLayout);
-                            stage.setScene(scene);
-                            stage.show();
-
-                        }
-                        catch (IOException e){
-                            System.out.println("ceva");
-                            e.printStackTrace();
-                        }
-                    }
-                });
-
-                util.getChildren().add(btnChat);
-
-                //btn add prieten
-                if ((utilizatorService.getPrietenie(new Tuple<>(id_sign_inUtil, x.getId())) == null && utilizatorService.getPrietenie(new Tuple<>(x.getId(), id_sign_inUtil)) == null && !utilizatorService.isApendingRequest(x.getId(),id_sign_inUtil))) {
-                    Button btnFriend = new Button();
-                    btnFriend.getStyleClass().add("btnFriendUser-list");
-                    btnFriend.setLayoutX(399);
-                    btnFriend.setLayoutY(12);
-                    btnFriend.setOnAction(new EventHandler<ActionEvent>() {
-                        @Override
-                        public void handle(ActionEvent event) {
-                            utilizatorService.sendInvidatie(id_sign_inUtil,x.getId());
-                            btnFriend.setVisible(false);
-                        }
-                    });
-                    util.getChildren().add(btnFriend);
-                }
-
+                UserPane util =new UserPane(x);
                 listUsersBox.add(util);
             }
-        });users_listView.getItems().clear();
+        });
+        users_listView.getItems().clear();
         users_listView.getItems().setAll(listUsersBox);
     }
 
@@ -166,140 +107,13 @@ public class ControllerUtilizator extends Observer {
         listRequestsBox.clear();
         utilizatorService.getInvitatiiPrimite(id_sign_inUtil).forEach(x->{
             Utilizator utilizator =utilizatorService.getOne(x.getId_from());
-            Pane  util = new Pane();
-            //imaginea
-            ImageView imgV =  new ImageView();
-            Image image = new Image("others/chain.png");
-            imgV.setImage(image);
-            imgV.setFitHeight(40);
-            imgV.setFitWidth(41);
-            imgV.setLayoutX(14);
-            imgV.setLayoutY(20);
-            util.getChildren().add(imgV);
-
-
-            //nume utilizator
-            Label textLabel = new Label(utilizator.getFirstName() + " " + utilizator.getLastName());
-            textLabel.getStyleClass().add("textRequest-list");
-            textLabel.setLayoutX(70);
-            textLabel.setLayoutY(0);
-            util.getChildren().add(textLabel);
-
-            //data utilizator
-            Label textStare = new Label();
-            textStare.getStyleClass().add("textTypeRequest-list");
-            textStare.setLayoutX(70);
-            textStare.setLayoutY(30);
-            if(x.getStare() == 1){
-                textStare.setText("Pending");
-
-            }
-            else if(x.getStare() == 3){
-                textStare.setText("Aproved");
-
-            }
-            else {
-                textStare.setText("Rejected");
-
-            }
-            util.getChildren().add(textStare);
-
-            if(x.getStare() == 1){
-                Button btnAprove = new Button();
-                btnAprove.getStyleClass().add("btnAproveRequest-list");
-                btnAprove.setLayoutX(350);
-                btnAprove.setLayoutY(14);
-                btnAprove.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        utilizatorService.acceptInvitatie(id_sign_inUtil,x.getId());
-                    }
-                });
-
-                util.getChildren().add(btnAprove);
-
-                Button btnDeny = new Button();
-                btnDeny.getStyleClass().add("btnDenyRequest-list");
-                btnDeny.setLayoutX(390);
-                btnDeny.setLayoutY(14);
-                btnDeny.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        utilizatorService.rejectInvitatie(id_sign_inUtil,x.getId());
-                    }
-                });
-                util.getChildren().add(btnDeny);
-
-            }
-
-            Button btnDelete = new Button();
-            btnDelete.getStyleClass().add("btnDeleteRequest-list");
-            btnDelete.setLayoutX(430);
-            btnDelete.setLayoutY(14);
-            btnDelete.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    utilizatorService.removeInvitatie(x.getId());
-                }
-            });
-            util.getChildren().add(btnDelete);
-
-
-
+            RequestPane  util = new RequestPane(utilizator,x,0);
             listRequestsBox.add(util);
         });
 
         utilizatorService.getInvitatiiTrimise(id_sign_inUtil).forEach(x->{
             Utilizator utilizator =utilizatorService.getOne(x.getId_to());
-            Pane  util = new Pane();
-            //imaginea
-            ImageView imgV =  new ImageView();
-            Image image = new Image("others/chain.png");
-            imgV.setImage(image);
-            imgV.setFitHeight(40);
-            imgV.setFitWidth(41);
-            imgV.setLayoutX(14);
-            imgV.setLayoutY(20);
-            util.getChildren().add(imgV);
-
-
-            //nume utilizator
-            Label textLabel = new Label(utilizator.getFirstName() + " " + utilizator.getLastName());
-            textLabel.getStyleClass().add("textRequest-list");
-            textLabel.setLayoutX(70);
-            textLabel.setLayoutY(0);
-            util.getChildren().add(textLabel);
-
-            //data utilizator
-            Label textStare = new Label();
-            textStare.getStyleClass().add("textTypeRequest-list");
-            textStare.setLayoutX(70);
-            textStare.setLayoutY(30);
-            if(x.getStare() == 1){
-                textStare.setText("Pending");
-
-            }
-            else if(x.getStare() == 3){
-                textStare.setText("Aproved");
-
-            }
-            else {
-                textStare.setText("Rejected");
-
-            }
-            util.getChildren().add(textStare);
-
-            Button btnDelete = new Button();
-            btnDelete.getStyleClass().add("btnDeleteRequest-list");
-            btnDelete.setLayoutX(430);
-            btnDelete.setLayoutY(14);
-            btnDelete.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    utilizatorService.removeInvitatie(x.getId());
-                }
-            });
-            util.getChildren().add(btnDelete);
+            RequestPane  util = new RequestPane(utilizator,x,1);
             listRequestsBox.add(util);
         });
 
@@ -310,51 +124,18 @@ public class ControllerUtilizator extends Observer {
     private void loadFriends(){
         listFriendsBox.clear();
         utilizatorService.getPrieteni(id_sign_inUtil).forEach(x->{
-            Pane util = new Pane();
-
-            //imaginea
-            ImageView imgV =  new ImageView();
-            Image image = new Image("others/user52x50.png");
-            imgV.setImage(image);
-            imgV.setLayoutX(6);
-            imgV.setLayoutY(15);
-            util.getChildren().add(imgV);
-
-
-            //nume utilizator
-            Label textLabel = new Label(x.getNume() + " " + x.getPrenume());
-            textLabel.getStyleClass().add("textFriend-list");
-            textLabel.setLayoutX(70);
-            textLabel.setLayoutY(0);
-            util.getChildren().add(textLabel);
-
-            //data utilizator
-            Label textData = new Label("since: " + x.getData().toString());
-            textData.getStyleClass().add("textDateFriend-list");
-            textData.setLayoutX(70);
-            textData.setLayoutY(30);
-            util.getChildren().add(textData);
-
-            //brn remove friend
-            Button btnRemoveFriend = new Button();
-            btnRemoveFriend.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    utilizatorService.removePrietenie(x.getId());
-                }
-            });
-            btnRemoveFriend.getStyleClass().add("btnRemoveFriend-list");
-            btnRemoveFriend.setLayoutX(448);
-            btnRemoveFriend.setLayoutY(20);
-            util.getChildren().add(btnRemoveFriend);
-
-
+            FriendPane util = new FriendPane(x);
             listFriendsBox.add(util);
         });
         friends_listView.getItems().clear();
         friends_listView.getItems().addAll(listFriendsBox);
     }
 
+    public void loadEvents(){
+        utilizatorService.getAllEvents().forEach(x->{
+            events_listView.getItems().add(x.getName()+" "+x.getDescription());
+        });
+    }
 
 
 
@@ -370,6 +151,8 @@ public class ControllerUtilizator extends Observer {
         users_layout.setVisible(false);
         requests_layout.setDisable(true);
         requests_layout.setVisible(false);
+        events_layout.setDisable(true);
+        events_layout.setVisible(false);
 
         friends_layout.setDisable(false);
         friends_layout.setVisible(true);
@@ -381,6 +164,8 @@ public class ControllerUtilizator extends Observer {
         friends_layout.setVisible(false);
         requests_layout.setDisable(true);
         requests_layout.setVisible(false);
+        events_layout.setDisable(true);
+        events_layout.setVisible(false);
 
         users_layout.setDisable(false);
         users_layout.setVisible(true);
@@ -392,6 +177,8 @@ public class ControllerUtilizator extends Observer {
         friends_layout.setVisible(false);
         users_layout.setDisable(true);
         users_layout.setVisible(false);
+        events_layout.setDisable(true);
+        events_layout.setVisible(false);
 
         requests_layout.setDisable(false);
         requests_layout.setVisible(true);
@@ -399,6 +186,20 @@ public class ControllerUtilizator extends Observer {
 
     }
 
+    @FXML
+    public void moveToevents(){
+        friends_layout.setDisable(true);
+        friends_layout.setVisible(false);
+        users_layout.setDisable(true);
+        users_layout.setVisible(false);
+        requests_layout.setDisable(true);
+        requests_layout.setVisible(false);
+
+        events_layout.setDisable(false);
+        events_layout.setVisible(true);
+        label_current_tab.setText("Events");
+
+    }
 
     @FXML
     public void handleActionHistoryButton(){
@@ -418,13 +219,288 @@ public class ControllerUtilizator extends Observer {
 
         }
         catch (IOException e){
-            System.out.println("ceva");
             e.printStackTrace();
         }
     }
 
     @Override
-    public void update() {
-        initModel();
+    public void update(EventForOb x) {
+        if(x.getEntityEventType() == EntityEventType.FRIEND){
+            loadFriends();
+        }
+        else if(x.getEntityEventType() == EntityEventType.REQUEST){
+            if(x.getEventType() == EventType.ADD){
+                loadRequests();
+            }
+            else if(x.getEventType() == EventType.UPDATE){
+                loadRequests();
+                loadFriends();
+            }
+            else if(x.getEventType() == EventType.REMOVE) {
+                loadRequests();
+            }
+        }
+
+    }
+
+
+    public class UserPane extends Pane{
+        //utilizator
+        Utilizator x;
+        //imaginea
+        ImageView imgV;
+        //numele utilizator
+        Label textLabel;
+        //btn chat
+        Button btnChat;
+        //btn add friend
+        Button btnFriend =null;
+
+        public UserPane(Utilizator utilizator){
+            this.x = utilizator;
+            loadImage();
+            loadName();
+            loadButtonChat();
+            loadBtnFriend();
+        }
+
+        private void loadImage() {
+            imgV =  new ImageView();
+            Image image = new Image("others/user52x50.png");
+            imgV.setImage(image);
+            imgV.setLayoutX(6);
+            imgV.setLayoutY(15);
+            super.getChildren().add(imgV);
+        }
+
+        private void loadName() {
+            textLabel = new Label(x.getFirstName() + " " + x.getLastName());
+            textLabel.getStyleClass().add("textUser-list");
+            textLabel.setLayoutX(62);
+            textLabel.setLayoutY(14);
+            super.getChildren().add(textLabel);
+        }
+
+        private void loadButtonChat() {
+            btnChat = new Button();
+            btnChat.getStyleClass().add("btnChatUser-list");
+            btnChat.setLayoutX(460);
+            btnChat.setLayoutY(14);
+            btnChat.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    try {
+                        FXMLLoader chatLoader = new FXMLLoader();
+                        chatLoader.setLocation(getClass().getResource("/views/chatView.fxml"));
+                        ControllerChat controllerChat = new ControllerChat();
+                        controllerChat.setService(utilizatorService, id_sign_inUtil, x.getId());
+                        chatLoader.setController(controllerChat);
+                        Stage stage = new Stage();
+                        AnchorPane chatLayout = chatLoader.load();
+
+                        Scene scene = new Scene(chatLayout);
+                        stage.setScene(scene);
+                        stage.show();
+
+                    } catch (IOException e) {
+                        System.out.println("ceva");
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+            super.getChildren().add(btnChat);
+        }
+
+        private void loadBtnFriend() {
+            if ((utilizatorService.getPrietenie(new Tuple<>(id_sign_inUtil, x.getId())) == null && utilizatorService.getPrietenie(new Tuple<>(x.getId(), id_sign_inUtil)) == null && !utilizatorService.isApendingRequest(x.getId(), id_sign_inUtil))) {
+                btnFriend = new Button();
+                btnFriend.getStyleClass().add("btnFriendUser-list");
+                btnFriend.setLayoutX(399);
+                btnFriend.setLayoutY(12);
+                btnFriend.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        utilizatorService.sendInvidatie(id_sign_inUtil, x.getId());
+                        UserPane.super.getChildren().remove(btnFriend);
+                    }
+                });
+                super.getChildren().add(btnFriend);
+            }
+        }
+
+        public Utilizator getUtilizator() {
+            return x;
+        }
+    }
+
+    public class RequestPane extends Pane{
+        //utilizator
+        Utilizator utilizator;
+        //
+        Invitatie x;
+        //tipul invitatie 1-> trimis, 0-> primita
+        int type;
+        //imaginea
+        ImageView imgV;
+        //numele utilizator
+        Label textLabel;
+        //stare request
+        Label textStare;
+        //btoane cereri primite
+        Button btnDeny;
+        Button btnAprove;
+        //buton delete cerere
+        Button btnDelete;
+
+        public RequestPane(Utilizator utilizator,Invitatie invitatie, int type){
+            this.utilizator = utilizator;
+            this.x = invitatie;
+            this.type = type;
+            loadImage();
+            loadName();
+            loadStare();
+            if(type == 0){
+                loadButtonAcceptAndDeny();
+            }
+            loadBtnDelete();
+        }
+
+        private void loadImage() {
+            imgV = new ImageView();
+            Image image = new Image("others/chain.png");
+            imgV.setImage(image);
+            imgV.setFitHeight(40);
+            imgV.setFitWidth(41);
+            imgV.setLayoutX(14);
+            imgV.setLayoutY(20);
+            super.getChildren().add(imgV);
+        }
+
+        private void loadName() {
+            textLabel = new Label(utilizator.getFirstName() + " " + utilizator.getLastName());
+            textLabel.getStyleClass().add("textRequest-list");
+            textLabel.setLayoutX(70);
+            textLabel.setLayoutY(0);
+            super.getChildren().add(textLabel);
+        }
+
+        private void loadStare() {
+            textStare = new Label();
+            textStare.getStyleClass().add("textTypeRequest-list");
+            textStare.setLayoutX(70);
+            textStare.setLayoutY(30);
+            if (x.getStare() == 1) {
+                textStare.setText("Pending");
+
+            } else if (x.getStare() == 3) {
+                textStare.setText("Aproved");
+
+            } else {
+                textStare.setText("Rejected");
+
+            }
+
+            super.getChildren().add(textStare);
+        }
+        private void loadButtonAcceptAndDeny() {
+            if (x.getStare() == 1) {
+                btnAprove = new Button();
+                btnAprove.getStyleClass().add("btnAproveRequest-list");
+                btnAprove.setLayoutX(350);
+                btnAprove.setLayoutY(14);
+                btnAprove.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        utilizatorService.acceptInvitatie(id_sign_inUtil, x.getId());
+                    }
+                });
+                super.getChildren().add(btnAprove);
+
+                btnDeny = new Button();
+                btnDeny.getStyleClass().add("btnDenyRequest-list");
+                btnDeny.setLayoutX(390);
+                btnDeny.setLayoutY(14);
+                btnDeny.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        utilizatorService.rejectInvitatie(id_sign_inUtil, x.getId());
+                    }
+                });
+                super.getChildren().add(btnDeny);
+
+            }
+        }
+
+        private void loadBtnDelete() {
+            btnDelete = new Button();
+            btnDelete.getStyleClass().add("btnDeleteRequest-list");
+            btnDelete.setLayoutX(430);
+            btnDelete.setLayoutY(14);
+            btnDelete.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    utilizatorService.removeInvitatie(x.getId());
+                }
+            });
+            super.getChildren().add(btnDelete);
+        }
+    }
+
+    public class FriendPane extends Pane{
+
+        //imaginea
+        ImageView imgV;
+        //nume utilizator
+        Label textLabel;
+        //data utilizator
+        Label textData;
+        //brn remove friend
+        Button btnRemoveFriend;
+        PrietenDTO x;
+        public FriendPane(PrietenDTO prieten){
+            this.x = prieten;
+            loadImage();
+            loadName();
+            loadTime();
+            loadButton();
+        }
+        private void loadImage() {
+            imgV = new ImageView();
+            Image image = new Image("others/user52x50.png");
+            imgV.setImage(image);
+            imgV.setLayoutX(6);
+            imgV.setLayoutY(15);
+            super.getChildren().add(imgV);
+        }
+
+        private void loadName() {
+           textLabel = new Label(x.getNume() + " " + x.getPrenume());
+           textLabel.getStyleClass().add("textFriend-list");
+           textLabel.setLayoutX(70);
+           textLabel.setLayoutY(0);
+           super.getChildren().add(textLabel);
+        }
+
+        private void loadTime() {
+            textData = new Label("since: " + x.getData().toString());
+            textData.getStyleClass().add("textDateFriend-list");
+            textData.setLayoutX(70);
+            textData.setLayoutY(30);
+            super.getChildren().add(textData);
+        }
+        private  void loadButton() {
+            btnRemoveFriend = new Button();
+            btnRemoveFriend.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    utilizatorService.removePrietenie(x.getId());
+                }
+            });
+            btnRemoveFriend.getStyleClass().add("btnRemoveFriend-list");
+            btnRemoveFriend.setLayoutX(448);
+            btnRemoveFriend.setLayoutY(20);
+            super.getChildren().add(btnRemoveFriend);
+        }
     }
 }

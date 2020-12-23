@@ -24,6 +24,7 @@ public class MainFX extends Application {
     Repository<Tuple<Long,Long>, Prietenie> prieteniiDBrepo;
     Repository<Long, Message> messageDBrepository;
     Repository<Long, Invitatie> invitatieDBrepository;
+    EventsDBrepo eventsDBrepository;
     AccountDBrepo accountDBrepo;
     UtilizatorService utilizatorService;
     public static void main(String[] args) {
@@ -39,8 +40,9 @@ public class MainFX extends Application {
         prieteniiDBrepo= new PrieteniiDBrepo(url, username, password, new PrietenieValidator());
         messageDBrepository= new MessageDBRepo(url, username,password);
         invitatieDBrepository= new InvitatieDBrepo(url, username,password);
+        eventsDBrepository = new EventsDBrepo(url,username,password);
         accountDBrepo= new AccountDBrepo(url,username,password);
-        utilizatorService = new UtilizatorService(usersDBrepo,prieteniiDBrepo,new FactoryUtilizatorDB(" "),new FactoryPrietenie(" "), messageDBrepository,invitatieDBrepository,accountDBrepo);
+        utilizatorService = new UtilizatorService(usersDBrepo,prieteniiDBrepo,new FactoryUtilizatorDB(" "),new FactoryPrietenie(" "), messageDBrepository,invitatieDBrepository,accountDBrepo,eventsDBrepository);
         initView(primaryStage);
         primaryStage.show();
 

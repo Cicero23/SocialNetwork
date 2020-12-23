@@ -5,10 +5,7 @@ import socialnetwork.domain.*;
 import socialnetwork.domain.validators.PrietenieValidator;
 import socialnetwork.domain.validators.UtilizatorValidator;
 import socialnetwork.repository.Repository;
-import socialnetwork.repository.database.InvitatieDBrepo;
-import socialnetwork.repository.database.MessageDBRepo;
-import socialnetwork.repository.database.PrieteniiDBrepo;
-import socialnetwork.repository.database.UsersDBrepo;
+import socialnetwork.repository.database.*;
 import socialnetwork.repository.factory.FactoryPrietenie;
 import socialnetwork.repository.factory.FactoryUtilizatorDB;
 import socialnetwork.service.UtilizatorService;
@@ -25,9 +22,7 @@ public class main3 {
         String url= ApplicationContext.getPROPERTIES().getProperty("database.socialnetwork.url");
         String username= ApplicationContext.getPROPERTIES().getProperty("database.socialnetwork.username");
         String password= ApplicationContext.getPROPERTIES().getProperty("database.socialnetwork.password");
-        Repository<Long, Invitatie> invitatieDBrepo = new InvitatieDBrepo(url,username,password);
-        invitatieDBrepo.save(new Invitatie(19,29,LocalDate.now(),1));
-
-
+        Repository<Long, Event> repo = new EventsDBrepo(url,username,password);
+        AccountDBrepo accountDBrepo = new AccountDBrepo(url,username,password);
     }
 }
