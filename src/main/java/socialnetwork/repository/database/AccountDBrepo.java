@@ -20,6 +20,13 @@ public class AccountDBrepo{
         this.password = password;
     }
 
+    /**
+     *
+     * @param username1 - string
+     * @param password1 - string
+     * @return null - there is no entity
+     *         entity - otherwise
+     */
     public Account findOne(String username1,String password1) {
         try(
                 Connection connection = DriverManager.getConnection(url,username,password);

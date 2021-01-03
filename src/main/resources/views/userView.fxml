@@ -2,8 +2,10 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -28,7 +30,6 @@
                         <Font name="System Bold" size="14.0" />
                      </font>
                   </Button>
-                  <TextField layoutX="43.0" layoutY="50.0" prefHeight="30.0" prefWidth="276.0" />
                </children>
             </AnchorPane>
             <AnchorPane fx:id="friends_layout" disable="true" layoutY="180.0" prefHeight="620.0" prefWidth="540.0" style="-fx-background-color: #ffffff;" visible="false">
@@ -46,14 +47,64 @@
             </AnchorPane>
             <AnchorPane fx:id="events_layout" disable="true" layoutY="180.0" prefHeight="620.0" prefWidth="540.0" style="-fx-background-color: #ffffff;" visible="false">
                <children>
-                  <ListView fx:id="events_listView" prefHeight="400.0" prefWidth="520.0" style="-fx-background-color: #ffffff;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                  <Pane prefHeight="580.0" prefWidth="540.0">
+                     <children>
+                        <ListView fx:id="events_listView" prefHeight="580.0" prefWidth="540.0" style="-fx-background-color: #ffffff;" />
+                     </children>
+                  </Pane>
+                  <Pane layoutY="580.0" prefHeight="40.0" prefWidth="540.0">
+                     <children>
+                        <TextField fx:id="pageNumber" alignment="CENTER" editable="false" layoutX="258.0" layoutY="4.0" prefHeight="25.0" prefWidth="25.0" text="1">
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font>
+                        </TextField>
+                        <Button layoutX="226.0" layoutY="4.0" mnemonicParsing="false" onAction="#handlePreviousPage" text="&lt;" />
+                        <Button layoutX="290.0" layoutY="4.0" mnemonicParsing="false" onAction="#handleNextPage" text="&gt;" />
+                        <Button layoutX="439.0" layoutY="2.0" mnemonicParsing="false" onAction="#handleCreateEvent" style="-fx-background-color: #11cc97; -fx-background-radius: 20;" text="Create Event" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font>
+                        </Button>
+                     </children>
+                  </Pane>
+                  <Pane fx:id="createEventPane" disable="true" layoutX="290.0" layoutY="270.0" prefHeight="350.0" prefWidth="250.0" style="-fx-background-color: linear-gradient(from 100% 0% to 0% 100%,  #0081f6, #0073c9);" visible="false">
+                     <children>
+                        <TextField fx:id="eventNameField" alignment="CENTER" layoutX="17.0" layoutY="79.0" prefHeight="30.0" prefWidth="215.0" promptText="Event name" style="-fx-background-color: #ffffff; -fx-background-radius: 20;">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </TextField>
+                        <TextArea fx:id="eventDescriptionArea" layoutX="13.0" layoutY="123.0" prefHeight="95.0" prefWidth="224.0" promptText="Description">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </TextArea>
+                        <Button layoutX="77.0" layoutY="281.0" mnemonicParsing="false" onAction="#handleEventCreate" style="-fx-background-color: #11cc97; -fx-background-radius: 20;" text="Create event" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Button>
+                        <Button layoutX="184.0" layoutY="317.0" mnemonicParsing="false" onAction="#handleBack" prefHeight="25.0" prefWidth="56.0" style="-fx-background-color: #ff4d4d; -fx-background-radius: 20;" text="Back" textAlignment="CENTER" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font>
+                        </Button>
+                        <DatePicker fx:id="eventDateField" layoutX="38.0" layoutY="232.0" promptText="Event Date" />
+                        <Text fill="WHITE" layoutX="51.0" layoutY="40.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Create event" wrappingWidth="148.5078125">
+                           <font>
+                              <Font name="System Bold" size="24.0" />
+                           </font>
+                        </Text>
+                     </children>
+                  </Pane>
                </children>
             </AnchorPane>
          </children>
       </AnchorPane>
       <AnchorPane prefHeight="800.0" prefWidth="260.0" style="-fx-background-color: linear-gradient(from 100% 0% to 0% 100%,  #0081f6, #0073c9);">
          <children>
-            <Pane fx:id="users_button" layoutY="191.0" onMouseClicked="#moveTousers" prefHeight="50.0" prefWidth="260.0" style="-fx-background-color: none;">
+            <Pane fx:id="users_button" layoutY="200.0" onMouseClicked="#moveTousers" prefHeight="50.0" prefWidth="260.0" style="-fx-background-color: none;">
                <padding>
                   <Insets bottom="7.0" />
                </padding>
@@ -65,7 +116,7 @@
                   </Label>
                </children>
             </Pane>
-            <Pane fx:id="friends_button" layoutY="246.0" onMouseClicked="#moveTofriends" prefHeight="50.0" prefWidth="260.0" style="-fx-background-color: none;">
+            <Pane fx:id="friends_button" layoutY="260.0" onMouseClicked="#moveTofriends" prefHeight="50.0" prefWidth="260.0" style="-fx-background-color: none;">
                <children>
                   <Label layoutX="60.0" layoutY="14.0" text="Friends" textFill="WHITE">
                      <font>
@@ -93,7 +144,7 @@
                   </ImageView>
                </children>
             </Pane>
-            <Pane fx:id="requests_button" layoutY="301.0" onMouseClicked="#moveTorequests" prefHeight="50.0" prefWidth="260.0" style="-fx-background-color: none;">
+            <Pane fx:id="requests_button" layoutY="320.0" onMouseClicked="#moveTorequests" prefHeight="50.0" prefWidth="260.0" style="-fx-background-color: none;">
                <children>
                   <Label layoutX="60.0" layoutY="14.0" text="Requests" textFill="WHITE">
                      <font>
@@ -102,7 +153,7 @@
                   </Label>
                </children>
             </Pane>
-            <Pane fx:id="events_button" layoutY="351.0" onMouseClicked="#moveToevents" prefHeight="50.0" prefWidth="260.0" style="-fx-background-color: none;">
+            <Pane fx:id="events_button" layoutY="380.0" onMouseClicked="#moveToevents" prefHeight="50.0" prefWidth="260.0" style="-fx-background-color: none;">
                <children>
                   <Label layoutX="60.0" layoutY="14.0" text="Events" textFill="WHITE">
                      <font>

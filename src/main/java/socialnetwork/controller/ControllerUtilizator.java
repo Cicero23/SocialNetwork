@@ -1,5 +1,8 @@
 package socialnetwork.controller;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -11,6 +14,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -21,7 +25,9 @@ import javafx.scene.layout.Pane;
 import javafx.scene.shape.Box;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import socialnetwork.domain.*;
+
 import socialnetwork.repository.database.PrieteniiDBrepo;
 import socialnetwork.service.UtilizatorService;
 import socialnetwork.utils.events.EntityEventType;
@@ -44,6 +50,7 @@ public class ControllerUtilizator extends Observer {
     ObservableList<Pane> listUsersBox = FXCollections.observableArrayList();
     ObservableList<Pane> listFriendsBox = FXCollections.observableArrayList();
     ObservableList<Pane> listRequestsBox = FXCollections.observableArrayList();
+    ObservableList<Pane> listEventsBox = FXCollections.observableArrayList();
     @FXML
     AnchorPane users_layout;
     @FXML
@@ -66,6 +73,8 @@ public class ControllerUtilizator extends Observer {
     Text first_name_text;
 
     @FXML
+    Pane createEventPane;
+    @FXML
     Text last_name_text;
 
     @FXML
@@ -74,9 +83,19 @@ public class ControllerUtilizator extends Observer {
     AnchorPane events_layout;
     @FXML
     ListView events_listView;
+    @FXML
+    TextField pageNumber;
+
+    @FXML
+    TextField eventNameField;
+    @FXML
+    TextArea eventDescriptionArea;
+    @FXML
+    DatePicker eventDateField;
 
     @FXML
     private void initialize() {
+        utilizatorService.setPageSize(7);
         initModel();
         Utilizator x = utilizatorService.getOne(id_sign_inUtil);
         first_name_text.setText(x.getFirstName());
@@ -88,7 +107,7 @@ public class ControllerUtilizator extends Observer {
         loadUsers();
         loadFriends();
         loadRequests();
-        loadEvents();
+        loadEvents(1);
     }
 
     private void loadUsers(){
@@ -131,10 +150,15 @@ public class ControllerUtilizator extends Observer {
         friends_listView.getItems().addAll(listFriendsBox);
     }
 
-    public void loadEvents(){
-        utilizatorService.getAllEvents().forEach(x->{
-            events_listView.getItems().add(x.getName()+" "+x.getDescription());
+    public void loadEvents(int page){
+        listEventsBox.clear();
+
+        utilizatorService.getEventsOnPage(page).forEach(x->{
+            EventPane eventPane = new EventPane(x);
+            listEventsBox.add(eventPane);
         });
+        events_listView.getItems().clear();
+        events_listView.getItems().addAll(listEventsBox);
     }
 
 
@@ -223,6 +247,66 @@ public class ControllerUtilizator extends Observer {
         }
     }
 
+    @FXML
+    public void handleNextPage(){
+        int pNumber = Integer.parseInt(pageNumber.getText());
+        pNumber++;
+        pageNumber.setText(String.valueOf(pNumber));
+        loadEvents(pNumber);
+
+
+    }
+
+    @FXML
+    public void handlePreviousPage(){
+        int pNumber = Integer.parseInt(pageNumber.getText());
+        if(pNumber > 1) {
+            pNumber--;
+            pageNumber.setText(String.valueOf(pNumber));
+            loadEvents(pNumber);
+        }
+    }
+
+    @FXML
+    public void handleCreateEvent(){
+        createEventPane.setLayoutY(620);
+        createEventPane.setVisible(true);
+        createEventPane.setDisable(false);
+        Timeline timeline = new Timeline();
+        timeline.setCycleCount(1);
+        KeyValue kvcreateEventPane= new KeyValue(createEventPane.layoutYProperty(), 270);
+        KeyFrame kfcreateEventPane = new KeyFrame(Duration.millis(500), kvcreateEventPane);
+        timeline.getKeyFrames().add(kfcreateEventPane);
+        timeline.play();
+    }
+
+    @FXML
+    public void handleBack(){
+        createEventPane.setDisable(true);
+        Timeline timeline = new Timeline();
+        timeline.setCycleCount(1);
+        KeyValue kvcreateEventPane= new KeyValue(createEventPane.layoutYProperty(), 620);
+        KeyFrame kfcreateEventPane = new KeyFrame(Duration.millis(500), kvcreateEventPane);
+        timeline.getKeyFrames().add(kfcreateEventPane);
+        timeline.play();
+    }
+    @FXML
+    public void handleEventCreate(){
+        if(eventNameField.getText()!=null && eventDateField.getValue() !=null && eventDescriptionArea.getText()!= null ){
+            if(utilizatorService.createEvent(eventNameField.getText(),eventDescriptionArea.getText(),eventDateField.getValue().atStartOfDay(),id_sign_inUtil) == null){
+                createEventPane.setDisable(true);
+                Timeline timeline = new Timeline();
+                timeline.setCycleCount(1);
+                KeyValue kvcreateEventPane= new KeyValue(createEventPane.layoutYProperty(), 620);
+                KeyFrame kfcreateEventPane = new KeyFrame(Duration.millis(500), kvcreateEventPane);
+                timeline.getKeyFrames().add(kfcreateEventPane);
+                timeline.play();
+            }
+        }
+    }
+
+
+
     @Override
     public void update(EventForOb x) {
         if(x.getEntityEventType() == EntityEventType.FRIEND){
@@ -244,6 +328,8 @@ public class ControllerUtilizator extends Observer {
     }
 
 
+
+
     public class UserPane extends Pane{
         //utilizator
         Utilizator x;
@@ -258,6 +344,7 @@ public class ControllerUtilizator extends Observer {
 
         public UserPane(Utilizator utilizator){
             this.x = utilizator;
+            super.autosize();
             loadImage();
             loadName();
             loadButtonChat();
@@ -283,8 +370,12 @@ public class ControllerUtilizator extends Observer {
 
         private void loadButtonChat() {
             btnChat = new Button();
+            Tooltip tpbtnChat = new Tooltip();
+            tpbtnChat.setText("Start Converstation");
+            tpbtnChat.setShowDelay(new Duration(10));
+            btnChat.setTooltip(tpbtnChat);
             btnChat.getStyleClass().add("btnChatUser-list");
-            btnChat.setLayoutX(460);
+            btnChat.setLayoutX(455);
             btnChat.setLayoutY(14);
             btnChat.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -296,6 +387,7 @@ public class ControllerUtilizator extends Observer {
                         controllerChat.setService(utilizatorService, id_sign_inUtil, x.getId());
                         chatLoader.setController(controllerChat);
                         Stage stage = new Stage();
+                        stage.setResizable(false);
                         AnchorPane chatLayout = chatLoader.load();
 
                         Scene scene = new Scene(chatLayout);
@@ -316,7 +408,7 @@ public class ControllerUtilizator extends Observer {
             if ((utilizatorService.getPrietenie(new Tuple<>(id_sign_inUtil, x.getId())) == null && utilizatorService.getPrietenie(new Tuple<>(x.getId(), id_sign_inUtil)) == null && !utilizatorService.isApendingRequest(x.getId(), id_sign_inUtil))) {
                 btnFriend = new Button();
                 btnFriend.getStyleClass().add("btnFriendUser-list");
-                btnFriend.setLayoutX(399);
+                btnFriend.setLayoutX(390);
                 btnFriend.setLayoutY(12);
                 btnFriend.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
@@ -435,7 +527,7 @@ public class ControllerUtilizator extends Observer {
         private void loadBtnDelete() {
             btnDelete = new Button();
             btnDelete.getStyleClass().add("btnDeleteRequest-list");
-            btnDelete.setLayoutX(430);
+            btnDelete.setLayoutX(455);
             btnDelete.setLayoutY(14);
             btnDelete.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -498,9 +590,70 @@ public class ControllerUtilizator extends Observer {
                 }
             });
             btnRemoveFriend.getStyleClass().add("btnRemoveFriend-list");
-            btnRemoveFriend.setLayoutX(448);
+            btnRemoveFriend.setLayoutX(455);
             btnRemoveFriend.setLayoutY(20);
             super.getChildren().add(btnRemoveFriend);
         }
+    }
+
+    public class EventPane extends Pane{
+        //utilizator
+        socialnetwork.domain.Event x;
+        //imaginea
+        ImageView imgV;
+        //numele utilizator
+        Label textLabel;
+        //btn chat
+        Button btnGo;
+        //btn add friend
+        Button btnFriend =null;
+
+        public EventPane(socialnetwork.domain.Event x){
+            this.x = x;
+            loadImage();
+            loadName();
+            if(utilizatorService.isAParticipant(id_sign_inUtil,x.getId()))
+                loadButtonGO();
+
+        }
+
+        private void loadImage() {
+            imgV =  new ImageView();
+            Image image = new Image("others/event.png");
+            imgV.setImage(image);
+            imgV.setLayoutX(3);
+            imgV.setLayoutY(10);
+            super.getChildren().add(imgV);
+        }
+
+        private void loadName() {
+            textLabel = new Label(x.getName());
+            textLabel.getStyleClass().add("textEvent-list");
+            textLabel.setLayoutX(62);
+            textLabel.setLayoutY(14);
+            super.getChildren().add(textLabel);
+        }
+
+        private void loadButtonGO() {
+            btnGo = new Button();
+
+            btnGo.setLayoutX(455);
+            btnGo.setLayoutY(14);
+            btnGo.setText("GO");
+            btnGo.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    utilizatorService.addParticipant(id_sign_inUtil,x.getId());
+                    btnGo.setVisible(false);
+                    btnGo.setDisable(true);
+                }
+            });
+
+            super.getChildren().add(btnGo);
+        }
+
+
+
+
     }
 }

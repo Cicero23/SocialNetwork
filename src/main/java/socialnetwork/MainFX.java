@@ -54,8 +54,8 @@ public class MainFX extends Application {
         FXMLLoader loginLoader = new FXMLLoader();
         loginLoader.setLocation(getClass().getResource("/views/loginView.fxml"));
         AnchorPane loginLayout = loginLoader.load();
-        primaryStage.initStyle(StageStyle.TRANSPARENT);
-
+        //primaryStage.initStyle(StageStyle.TRANSPARENT);
+        primaryStage.setResizable(false);
         primaryStage.setScene(new Scene(loginLayout));
 
         ControllerLogin controllerLogin =loginLoader.getController();

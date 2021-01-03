@@ -10,6 +10,9 @@ import socialnetwork.repository.Repository;
 import socialnetwork.repository.database.*;
 import socialnetwork.repository.factory.FactoryPrietenie;
 import socialnetwork.repository.factory.FactoryUtilizatorDB;
+import socialnetwork.repository.paging.Page;
+import socialnetwork.repository.paging.Pageable;
+import socialnetwork.repository.paging.PageableImplementation;
 import socialnetwork.service.UtilizatorService;
 import socialnetwork.ui.UiSimplu;
 
@@ -25,8 +28,12 @@ public class Main2 {
         Repository<Long, Message> messageDBrepository = new MessageDBRepo(url, username,password);
         Repository<Long, Invitatie> invitatieDBrepository = new InvitatieDBrepo(url, username,password);
         AccountDBrepo accountDBrepo = new AccountDBrepo(url,username,password);
+        EventsDBrepo repoEvents = new EventsDBrepo(url,username,password);
         //UtilizatorService utilizatorService  = new UtilizatorService(usersDBrepo,prieteniiDBrepo,new FactoryUtilizatorDB(" "),new FactoryPrietenie(" "), messageDBrepository,invitatieDBrepository,accountDBrepo);
         //UiSimplu uiSimplu = new UiSimplu(utilizatorService);
         //uiSimplu.run();
+        Pageable pageable = new PageableImplementation(1, 1);
+        Page<Event> studentPage = repoEvents.findAll(pageable);
+        studentPage.getContent().forEach(System.out::println);
     }
 }

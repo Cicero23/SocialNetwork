@@ -5,6 +5,7 @@ import socialnetwork.domain.Invitatie;
 import socialnetwork.domain.Message;
 import socialnetwork.domain.ReplayMessage;
 import socialnetwork.repository.Repository;
+import socialnetwork.repository.paging.*;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -15,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public class EventsDBrepo implements Repository<Long, Event>{
+public class EventsDBrepo implements PagingRepository<Long, Event> {
     private String url;
     private String username;
     private String password;
@@ -40,8 +41,8 @@ public class EventsDBrepo implements Repository<Long, Event>{
                 String name = resultSet.getString("name");
                 String desc = resultSet.getString("description");
                 LocalDateTime ld = resultSet.getTimestamp("date_event").toLocalDateTime();
-
-                Event event = new Event(name,desc,ld);
+                Long id_user = resultSet.getLong("id_user");
+                Event event = new Event(name,desc,ld,id_user);
                 event.setId(id);
                 String sqlSelectPart = "SELECT * FROM events_participants WHERE id_event = ?";
                 PreparedStatement statementSelectPart = connection.prepareStatement(sqlSelectPart);
@@ -79,7 +80,8 @@ public class EventsDBrepo implements Repository<Long, Event>{
                 String desc = resultSet.getString("description");
                 LocalDateTime ld = resultSet.getTimestamp("date_event").toLocalDateTime();
 
-                Event event = new Event(name,desc,ld);
+                Long id_user = resultSet.getLong("id_user");
+                Event event = new Event(name,desc,ld,id_user);
                 event.setId(id);
                 String sqlSelectPart = "SELECT * FROM events_participants WHERE id_event= ?";
                 PreparedStatement statementSelectPart = connection.prepareStatement(sqlSelectPart);
@@ -108,11 +110,12 @@ public class EventsDBrepo implements Repository<Long, Event>{
                 Connection connection = DriverManager.getConnection(url,username,password);
         ){
 
-            String sqlInsert = "INSERT INTO events(name,description,date_event) VALUES (?,?,?)";
+            String sqlInsert = "INSERT INTO events(name,description,date_event,id_user) VALUES (?,?,?,?)";
             PreparedStatement statementInsert = connection.prepareStatement(sqlInsert);
             statementInsert.setString(1, entity.getName());
             statementInsert.setString(2, entity.getDescription());
             statementInsert.setObject(3, entity.getDate());
+            statementInsert.setLong(4,entity.getId_user());
             System.out.println(statementInsert.toString());
             statementInsert.executeUpdate();
             return null;
@@ -123,6 +126,13 @@ public class EventsDBrepo implements Repository<Long, Event>{
         }
 
     }
+
+    /**
+     *
+     * @param idPart
+     * @param idEvent
+     * @return
+     */
 
     public Long savePart(Long idPart,Long idEvent){
         try(
@@ -144,6 +154,28 @@ public class EventsDBrepo implements Repository<Long, Event>{
         }
     }
 
+    public boolean findPart(Long idPart,Long idEvent){
+        try(
+                Connection connection = DriverManager.getConnection(url,username,password);
+        ){
+
+            String sqlExist= "SELECT * FROM events_participants WHERE id_user = ? AND id_event= ?";
+            PreparedStatement statementExist = connection.prepareStatement(sqlExist);
+            statementExist.setLong(1, idPart);
+            statementExist.setLong(2, idEvent);
+            ResultSet resultSet = statementExist.executeQuery();
+            if(resultSet.next()){
+                return  true;
+            }
+
+            return false;
+
+        }
+        catch (SQLException ex){
+            return false;
+        }
+    }
+
     @Override
     public Event delete(Long id) {
         try(
@@ -158,19 +190,14 @@ public class EventsDBrepo implements Repository<Long, Event>{
                 String name = resultSet.getString("name");
                 String desc = resultSet.getString("description");
                 LocalDateTime ld = resultSet.getTimestamp("date_event").toLocalDateTime();
-
-                Event event = new Event(name,desc,ld);
+                Long id_user = resultSet.getLong("id_user");
+                Event event = new Event(name,desc,ld,id_user);
                 event.setId(id);
-                String sqlSelectPart = "SELECT * FROM events_participants WHERE id_event= ?";
+                String sqlSelectPart = "DELETE FROM events_participants WHERE id_event= ?";
                 PreparedStatement statementSelectPart = connection.prepareStatement(sqlSelectPart);
                 statementSelectPart.setLong(1,id);
-                ResultSet resultSetDest = statementSelectPart.executeQuery();
-                List<Long> part = new ArrayList<Long>();
-                while (resultSetDest.next()){
-                    Long idP = resultSetDest.getLong("id_user");
-                    part.add(idP);
-                }
-                event.setParticipants(part);
+                statementSelectPart.executeUpdate();
+
 
                 String sqlDelete = "DELETE FROM events WHERE id_event= ?";
                 PreparedStatement statementDelete = connection.prepareStatement(sqlDelete);
@@ -188,5 +215,11 @@ public class EventsDBrepo implements Repository<Long, Event>{
     @Override
     public Event update(Event entity) {
         return null;
+    }
+
+    @Override
+    public Page<Event> findAll(Pageable pageable) {
+        PaginatorDBEvents paginator = new PaginatorDBEvents(this.url,this.username,this.password,pageable);
+        return paginator.paginate();
     }
 }

@@ -5,6 +5,9 @@ import socialnetwork.repository.Repository;
 import socialnetwork.repository.database.AccountDBrepo;
 import socialnetwork.repository.database.EventsDBrepo;
 import socialnetwork.repository.factory.Factory;
+import socialnetwork.repository.paging.Page;
+import socialnetwork.repository.paging.Pageable;
+import socialnetwork.repository.paging.PageableImplementation;
 import socialnetwork.utils.events.EntityEventType;
 import socialnetwork.utils.events.EventType;
 import socialnetwork.utils.observer.Observable;
@@ -488,12 +491,36 @@ public class UtilizatorService extends Observable{
         return repoEvents.findAll();
     }
 
+
+    private int page = 1;
+    private int size = 1;
+
+    private Pageable pageable;
+
+    public void setPageSize(int size) {
+        this.size = size;
+    }
+
+    public Iterable<Event> getEventsOnPage(int page) {
+        this.page=page;
+        Pageable pageable = new PageableImplementation(page, this.size);
+        Page<Event> studentPage = repoEvents.findAll(pageable);
+        return studentPage.getContent().collect(Collectors.toList());
+    }
+
+
     public void addParticipant(Long idP, Long idE){
         repoEvents.savePart(idP, idE);
 
     }
-    public Event createEvent(String name, String desc, LocalDateTime date){
-        return repoEvents.save(new Event(name,desc,date));
+
+    public boolean isAParticipant(Long idP, Long idE){
+        return !repoEvents.findPart(idP,idE);
+    }
+
+
+    public Event createEvent(String name, String desc, LocalDateTime date,long id_user){
+        return repoEvents.save(new Event(name,desc,date,id_user));
     }
 
 
