@@ -1,0 +1,69 @@
+#users_button{
+    -fx-background: transparent;
+}
+
+#users_button:hover{
+    -fx-background-color: rgba(211,211,211,0.5);
+}
+
+
+#friends_button{
+    -fx-background: transparent;
+}
+
+#friends_button:hover{
+    -fx-background-color: rgba(211,211,211,0.5);
+}
+
+
+#requests_button{
+    -fx-background: transparent;
+}
+
+#requests_button:hover{
+    -fx-background-color: rgba(211,211,211,0.5);
+}
+
+
+#events_button{
+    -fx-background: transparent;
+}
+
+#events_button:hover{
+    -fx-background-color: rgba(211,211,211,0.5);
+}
+
+#button_action_history{
+    -fx-background-color: #11cc97;
+    -fx-background-radius: 20;
+}
+#button_action_history:hover{
+    -fx-background-color: #10cb6e;
+}
+
+#createEvent_button{
+    -fx-background-color: #11cc97;
+    -fx-background-radius: 20;
+}
+
+#button_action_history:hover{
+    -fx-background-color: #10cb6e;
+}
+
+#eventPage_button{
+    -fx-background-color: #11cc97;
+    -fx-background-radius: 20;
+}
+
+#eventPage_button:hover{
+    -fx-background-color: #10cb6e;
+}
+
+#createEvent_button{
+    -fx-background-color: #11cc97;
+    -fx-background-radius: 20;
+}
+
+#createEvent_button:hover{
+    -fx-background-color: #10cb6e;
+}

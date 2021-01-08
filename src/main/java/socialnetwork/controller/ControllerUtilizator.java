@@ -38,6 +38,7 @@ import socialnetwork.utils.observer.Observer;
 import java.awt.*;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.time.format.DateTimeFormatter;
 
 
 public class ControllerUtilizator extends Observer {
@@ -310,7 +311,13 @@ public class ControllerUtilizator extends Observer {
     @Override
     public void update(EventForOb x) {
         if(x.getEntityEventType() == EntityEventType.FRIEND){
-            loadFriends();
+            if(x.getEventType() == EventType.ADD)
+                loadFriends();
+            else {
+                loadFriends();
+                loadRequests();
+                loadUsers();
+            }
         }
         else if(x.getEntityEventType() == EntityEventType.REQUEST){
             if(x.getEventType() == EventType.ADD){
@@ -322,8 +329,10 @@ public class ControllerUtilizator extends Observer {
             }
             else if(x.getEventType() == EventType.REMOVE) {
                 loadRequests();
+                loadUsers();
             }
         }
+
 
     }
 
@@ -387,6 +396,7 @@ public class ControllerUtilizator extends Observer {
                         controllerChat.setService(utilizatorService, id_sign_inUtil, x.getId());
                         chatLoader.setController(controllerChat);
                         Stage stage = new Stage();
+                        stage.setAlwaysOnTop(true);
                         stage.setResizable(false);
                         AnchorPane chatLayout = chatLoader.load();
 
@@ -406,6 +416,7 @@ public class ControllerUtilizator extends Observer {
 
         private void loadBtnFriend() {
             if ((utilizatorService.getPrietenie(new Tuple<>(id_sign_inUtil, x.getId())) == null && utilizatorService.getPrietenie(new Tuple<>(x.getId(), id_sign_inUtil)) == null && !utilizatorService.isApendingRequest(x.getId(), id_sign_inUtil))) {
+
                 btnFriend = new Button();
                 btnFriend.getStyleClass().add("btnFriendUser-list");
                 btnFriend.setLayoutX(390);
@@ -417,6 +428,10 @@ public class ControllerUtilizator extends Observer {
                         UserPane.super.getChildren().remove(btnFriend);
                     }
                 });
+                Tooltip tpbtnFriend = new Tooltip();
+                tpbtnFriend.setText("Send request");
+                tpbtnFriend.setShowDelay(new Duration(10));
+                btnFriend.setTooltip(tpbtnFriend );
                 super.getChildren().add(btnFriend);
             }
         }
@@ -507,6 +522,10 @@ public class ControllerUtilizator extends Observer {
                         utilizatorService.acceptInvitatie(id_sign_inUtil, x.getId());
                     }
                 });
+                Tooltip tpbtnAprove = new Tooltip();
+                tpbtnAprove.setText("Accept request");
+                tpbtnAprove.setShowDelay(new Duration(10));
+                btnAprove.setTooltip(tpbtnAprove);
                 super.getChildren().add(btnAprove);
 
                 btnDeny = new Button();
@@ -519,6 +538,10 @@ public class ControllerUtilizator extends Observer {
                         utilizatorService.rejectInvitatie(id_sign_inUtil, x.getId());
                     }
                 });
+                Tooltip tpbtnDeny = new Tooltip();
+                tpbtnDeny.setText("Deny request");
+                tpbtnDeny.setShowDelay(new Duration(10));
+                btnDeny.setTooltip(tpbtnDeny);
                 super.getChildren().add(btnDeny);
 
             }
@@ -535,6 +558,10 @@ public class ControllerUtilizator extends Observer {
                     utilizatorService.removeInvitatie(x.getId());
                 }
             });
+            Tooltip tpbtnDelete = new Tooltip();
+            tpbtnDelete.setText("Delete request");
+            tpbtnDelete.setShowDelay(new Duration(10));
+            btnDelete.setTooltip(tpbtnDelete);
             super.getChildren().add(btnDelete);
         }
     }
@@ -592,6 +619,10 @@ public class ControllerUtilizator extends Observer {
             btnRemoveFriend.getStyleClass().add("btnRemoveFriend-list");
             btnRemoveFriend.setLayoutX(455);
             btnRemoveFriend.setLayoutY(20);
+            Tooltip tpbtnDelete = new Tooltip();
+            tpbtnDelete.setText("Remove Friend");
+            tpbtnDelete.setShowDelay(new Duration(10));
+            btnRemoveFriend.setTooltip(tpbtnDelete);
             super.getChildren().add(btnRemoveFriend);
         }
     }
@@ -603,6 +634,7 @@ public class ControllerUtilizator extends Observer {
         ImageView imgV;
         //numele utilizator
         Label textLabel;
+        Label datatabel;
         //btn chat
         Button btnGo;
         //btn add friend
@@ -612,8 +644,12 @@ public class ControllerUtilizator extends Observer {
             this.x = x;
             loadImage();
             loadName();
+            loadData();
             if(utilizatorService.isAParticipant(id_sign_inUtil,x.getId()))
                 loadButtonGO();
+            else{
+
+            }
 
         }
 
@@ -630,7 +666,14 @@ public class ControllerUtilizator extends Observer {
             textLabel = new Label(x.getName());
             textLabel.getStyleClass().add("textEvent-list");
             textLabel.setLayoutX(62);
-            textLabel.setLayoutY(14);
+            textLabel.setLayoutY(15);
+            super.getChildren().add(textLabel);
+        }
+        private void loadData(){
+            textLabel = new Label(x.getDate().format(DateTimeFormatter.ofPattern("E, MMM dd yyyy")));
+            textLabel.getStyleClass().add("textDateEvent-list");
+            textLabel.setLayoutX(62);
+            textLabel.setLayoutY(40);
             super.getChildren().add(textLabel);
         }
 
@@ -648,11 +691,16 @@ public class ControllerUtilizator extends Observer {
                     btnGo.setDisable(true);
                 }
             });
-
+            Tooltip tpbtnGO = new Tooltip();
+            tpbtnGO.setText("Go to event");
+            tpbtnGO.setShowDelay(new Duration(10));
+            btnGo.setTooltip(tpbtnGO);
             super.getChildren().add(btnGo);
         }
 
+        private void loadGoing(){
 
+        }
 
 
     }

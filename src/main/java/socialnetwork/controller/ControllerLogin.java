@@ -81,10 +81,14 @@ public class ControllerLogin {
                     controllerUtilizator.setService(utilizatorService, signed_in_account.getId_user());
                     utilLoader.setController(controllerUtilizator);
                     AnchorPane userLayout = utilLoader.load();
+                    Stage stage = new Stage();
+                    stage.setResizable(false);
                     Scene scene = new Scene(userLayout);
                     scene.getStylesheets().add("/CSS/listviewStyle.css");
-                    sign_inStage.setScene(scene);
-
+                    stage.setScene(scene);
+                    stage.show();
+                    username_field.clear();
+                    password_field.clear();
 
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -147,8 +151,13 @@ public class ControllerLogin {
                 timeline.getKeyFrames().add(kfregisterPane);
                 timeline.play();
                 registerPane.setDisable(true);
+                username_registerField.clear();
+                password_registerField.clear();
+                first_nameField.clear();
+                last_nameField.clear();
             }
 
         }
+
     }
 }

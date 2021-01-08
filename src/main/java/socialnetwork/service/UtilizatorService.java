@@ -14,6 +14,10 @@ import socialnetwork.utils.observer.Observable;
 import socialnetwork.utils.observer.Observer;
 import socialnetwork.utils.events.EventForOb;
 
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.chrono.ChronoLocalDate;
@@ -469,23 +473,49 @@ public class UtilizatorService extends Observable{
 
 
     public Account signin(String username, String password){
-        return repoAccount.findOne(username,password);
+        try {
+            password = encript(password);
+        }
+        catch (NoSuchAlgorithmException e){
+            ;
+        }
+        return repoAccount.findOne(username, password);
+
     }
 
     public Account register(String username, String password, String first_name, String last_name){
-        if(repoAccount.save(username, password)== null){
-            Utilizator utilizator = repoUtilizatori.save(new Utilizator(first_name, last_name));
-            if( utilizator != null){
-                if(repoAccount.update(username,utilizator.getId()) == null)
-                {
-                    return null;
+        try {
+            password = encript(password);
+            if (repoAccount.save(username, password) == null) {
+                Utilizator utilizator = repoUtilizatori.save(new Utilizator(first_name, last_name));
+                if (utilizator != null) {
+                    if (repoAccount.update(username, utilizator.getId()) == null) {
+                        return null;
+                    }
+
+
                 }
-
-
             }
+        }
+        catch (NoSuchAlgorithmException e){
+            ;
         }
         return new Account(username,password,-1);
     }
+
+    private String encript(String s) throws NoSuchAlgorithmException {
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
+        byte[] SHAByte = md.digest(s.getBytes(StandardCharsets.UTF_8));
+        BigInteger number = new BigInteger(1, SHAByte   );
+        StringBuilder hexString = new StringBuilder(number.toString(16));
+        while (hexString.length() < 32)
+        {
+            hexString.insert(0, '0');
+        }
+
+        return hexString.toString();
+    }
+
 
     public Iterable<Event> getAllEvents(){
         return repoEvents.findAll();

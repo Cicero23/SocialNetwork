@@ -12,6 +12,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
@@ -26,6 +27,7 @@ import javax.xml.crypto.Data;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,10 +64,13 @@ public class ControllerChat extends Observer {
     private void loadMessages(){
         msg_listView.clear();
         utilizatorService.getConversatie(id_from,id_to).forEach(x ->{
-            MyLabel msg = new MyLabel(x.getMesaj(),x.getId());
+            MyLabel msg = new MyLabel(x.getData().toLocalTime().format(DateTimeFormatter.ofPattern("hh:mm:ss"))+": "+x.getMesaj(),x.getId());
             msg.setPrefWidth(message_listView.getPrefWidth()-20);
             if(x.getFrom() == id_from){
-                msg.setAlignment(Pos.CENTER_RIGHT);
+                msg.setTextFill(Color.web("#35e655"));
+            }
+            else{
+                msg.setTextFill(Color.web("#ed4e4e"));
             }
             msg_listView.add(msg);
         });

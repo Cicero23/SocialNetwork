@@ -27,7 +27,7 @@ public class PaginatorDBEvents extends Paginator<Event> {
                 Connection connection = DriverManager.getConnection(url,username,password);
         ){
             Map<Long,Event> entities = new HashMap<Long,Event>();
-            String sqlSelect = "SELECT * FROM events ORDER BY id_event";
+            String sqlSelect = "SELECT * FROM events ORDER BY date_event ";
             PreparedStatement statementSelectEvent = connection.prepareStatement(sqlSelect, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
             ResultSet resultSet = statementSelectEvent.executeQuery();
             resultSet.absolute(Math.max((pageable.getPageNumber()-1) * pageable.getPageSize(),0));

@@ -114,6 +114,10 @@
 
 .textEvent-list{
     -fx-font-size: 18;
-    -fx-pref-height: 50;
+    -fx-font-weight: bold;
+}
+
+.textDateEvent-list{
+    -fx-font-size: 14;
     -fx-font-weight: bold;
 }
