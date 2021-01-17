@@ -11,10 +11,13 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.paint.RadialGradient?>
+<?import javafx.scene.paint.Stop?>
+<?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="800.0" prefWidth="800.0" style="-fx-background-color: #ffffff;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" stylesheets="/CSS/userView.css" >
+<AnchorPane prefHeight="800.0" prefWidth="800.0" style="-fx-background-color: #ffffff;" stylesheets="/CSS/userView.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <AnchorPane layoutX="260.0" prefHeight="800.0" prefWidth="540.0">
          <children>
@@ -25,7 +28,7 @@
                         <Font name="System Bold" size="24.0" />
                      </font>
                   </Label>
-                  <Button fx:id="button_action_history" layoutX="411.0" layoutY="126.0" mnemonicParsing="false" onAction="#handleActionHistoryButton"  text="Action History" textFill="WHITE">
+                  <Button fx:id="button_action_history" layoutX="411.0" layoutY="126.0" mnemonicParsing="false" onAction="#handleActionHistoryButton" text="Action History" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
@@ -61,7 +64,7 @@
                         </TextField>
                         <Button layoutX="226.0" layoutY="4.0" mnemonicParsing="false" onAction="#handlePreviousPage" text="&lt;" />
                         <Button layoutX="290.0" layoutY="4.0" mnemonicParsing="false" onAction="#handleNextPage" text="&gt;" />
-                        <Button fx:id="eventPage_button" layoutX="439.0" layoutY="2.0" mnemonicParsing="false" onAction="#handleCreateEvent"  text="Create Event" textFill="WHITE">
+                        <Button fx:id="eventPage_button" layoutX="439.0" layoutY="2.0" mnemonicParsing="false" onAction="#handleCreateEvent" text="Create Event" textFill="WHITE">
                            <font>
                               <Font name="System Bold" size="12.0" />
                            </font>
@@ -102,9 +105,9 @@
             </AnchorPane>
          </children>
       </AnchorPane>
-      <AnchorPane prefHeight="800.0" prefWidth="260.0" style="-fx-background-color: linear-gradient(from 100% 0% to 0% 100%,  #0081f6, #0073c9); " >
+      <AnchorPane prefHeight="800.0" prefWidth="260.0" style="-fx-background-color: linear-gradient(from 100% 0% to 0% 100%,  #0081f6, #0073c9); ">
          <children>
-            <Pane fx:id="users_button" layoutY="200.0" onMouseClicked="#moveTousers" prefHeight="50.0" prefWidth="260.0" >
+            <Pane fx:id="users_button" layoutY="200.0" onMouseClicked="#moveTousers" prefHeight="50.0" prefWidth="260.0">
                <padding>
                   <Insets bottom="7.0" />
                </padding>
@@ -116,7 +119,7 @@
                   </Label>
                </children>
             </Pane>
-            <Pane fx:id="friends_button" layoutY="260.0" onMouseClicked="#moveTofriends" prefHeight="50.0" prefWidth="260.0" >
+            <Pane fx:id="friends_button" layoutY="260.0" onMouseClicked="#moveTofriends" prefHeight="50.0" prefWidth="260.0">
                <children>
                   <Label layoutX="60.0" layoutY="14.0" text="Friends" textFill="WHITE">
                      <font>
@@ -153,13 +156,36 @@
                   </Label>
                </children>
             </Pane>
-            <Pane fx:id="events_button" layoutY="380.0" onMouseClicked="#moveToevents" prefHeight="50.0" prefWidth="260.0" >
+            <Pane fx:id="events_button" layoutY="380.0" onMouseClicked="#moveToevents" prefHeight="50.0" prefWidth="260.0">
                <children>
+                  <Circle layoutX="214.0" layoutY="25.0" radius="9.0" strokeType="INSIDE" strokeWidth="0.0">
+                     <stroke>
+                        <RadialGradient centerX="0.5" centerY="0.4857142857142857" radius="0.39534883720930236">
+                           <stops>
+                              <Stop color="#ff9d35" />
+                              <Stop color="WHITE" offset="1.0" />
+                           </stops>
+                        </RadialGradient>
+                     </stroke>
+                     <fill>
+                        <RadialGradient centerX="0.5" centerY="0.5095238095238095" radius="0.872093023255814">
+                           <stops>
+                              <Stop color="#ff9300fc" />
+                              <Stop color="WHITE" offset="1.0" />
+                           </stops>
+                        </RadialGradient>
+                     </fill>
+                  </Circle>
                   <Label layoutX="60.0" layoutY="14.0" text="Events" textFill="WHITE">
                      <font>
                         <Font name="Arial Bold" size="20.0" />
                      </font>
                   </Label>
+                  <Text fx:id="notification_field" fill="WHITE" layoutX="210.0" layoutY="30.0" strokeType="OUTSIDE" strokeWidth="0.0" text="1">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Text>
                </children>
             </Pane>
          </children>

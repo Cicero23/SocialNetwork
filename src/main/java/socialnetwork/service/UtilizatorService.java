@@ -23,6 +23,7 @@ import java.time.LocalDateTime;
 import java.time.chrono.ChronoLocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 public class UtilizatorService extends Observable{
@@ -521,6 +522,21 @@ public class UtilizatorService extends Observable{
         return repoEvents.findAll();
     }
 
+    public long numberOfNextEvents(Long id, LocalDateTime now, long days){
+        return StreamSupport.stream(repoEvents.findAll().spliterator(),false)
+                .filter(x->{
+                    for(long idP: x.getParticipants()){
+                        if (idP == id) return true;
+                    }
+                    return false;
+                })
+                .filter(x->{
+                    LocalDateTime fin = now.plusDays(days);
+                    return x.getDate().isAfter(now) && x.getDate().isBefore(fin);
+                })
+                .count();
+
+    }
 
     private int page = 1;
     private int size = 1;

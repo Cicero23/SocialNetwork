@@ -38,6 +38,7 @@ import socialnetwork.utils.observer.Observer;
 import java.awt.*;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 
@@ -93,6 +94,8 @@ public class ControllerUtilizator extends Observer {
     TextArea eventDescriptionArea;
     @FXML
     DatePicker eventDateField;
+    @FXML
+    Text notification_field;
 
     @FXML
     private void initialize() {
@@ -101,6 +104,8 @@ public class ControllerUtilizator extends Observer {
         Utilizator x = utilizatorService.getOne(id_sign_inUtil);
         first_name_text.setText(x.getFirstName());
         last_name_text.setText(x.getLastName());
+        String s= String.valueOf(utilizatorService.numberOfNextEvents(id_sign_inUtil, LocalDateTime.now(),10));
+        notification_field.setText(s);
 
     }
 

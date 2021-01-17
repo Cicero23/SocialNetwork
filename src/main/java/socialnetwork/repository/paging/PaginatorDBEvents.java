@@ -27,10 +27,11 @@ public class PaginatorDBEvents extends Paginator<Event> {
                 Connection connection = DriverManager.getConnection(url,username,password);
         ){
             Map<Long,Event> entities = new HashMap<Long,Event>();
-            String sqlSelect = "SELECT * FROM events ORDER BY date_event ";
+            String sqlSelect = "SELECT * FROM events ORDER BY date_event OFFSET ?";
             PreparedStatement statementSelectEvent = connection.prepareStatement(sqlSelect, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+            statementSelectEvent.setLong(1,Math.max((pageable.getPageNumber()-1) * pageable.getPageSize(),0));
             ResultSet resultSet = statementSelectEvent.executeQuery();
-            resultSet.absolute(Math.max((pageable.getPageNumber()-1) * pageable.getPageSize(),0));
+            //resultSet.absolute(Math.max((pageable.getPageNumber()-1) * pageable.getPageSize(),0));
             int nrOfRows = 0;
             while(resultSet.next() && nrOfRows < pageable.getPageSize()){
                 Long id = resultSet.getLong("id_event");
