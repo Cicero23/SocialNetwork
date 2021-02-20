@@ -307,6 +307,9 @@ public class ControllerUtilizator extends Observer {
                 KeyFrame kfcreateEventPane = new KeyFrame(Duration.millis(500), kvcreateEventPane);
                 timeline.getKeyFrames().add(kfcreateEventPane);
                 timeline.play();
+                eventNameField.clear();
+                eventDescriptionArea.clear();
+
             }
         }
     }

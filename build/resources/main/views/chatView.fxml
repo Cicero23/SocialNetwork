@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane prefHeight="478.0" prefWidth="422.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Pane prefHeight="509.0" prefWidth="422.0" style="-fx-background-color: linear-gradient(from 100% 0% to 0% 100%, #07a0e6, #0081f6);">
+         <children>
+            <ListView fx:id="message_listView" layoutX="27.0" layoutY="91.0" prefHeight="312.0" prefWidth="368.0" style="-fx-background-color: #ffffff;" />
+            <Button fx:id="btn_sendMessage" layoutX="345.0" layoutY="414.0" mnemonicParsing="false" onAction="#handleSendMessage" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: #11cc97; -fx-background-radius: 30;">
+               <graphic>
+                  <ImageView fitHeight="31.0" fitWidth="30.0">
+                     <image>
+                        <Image url="@../others/send.png" />
+                     </image>
+                  </ImageView>
+               </graphic></Button>
+            <TextField fx:id="messageField" alignment="CENTER_LEFT" layoutX="27.0" layoutY="419.0" prefHeight="40.0" prefWidth="300.0" style="-fx-background-radius: 20;">
+               <font>
+                  <Font size="17.0" />
+               </font>
+            </TextField>
+            <ImageView fitHeight="70.0" fitWidth="74.0" layoutX="27.0" layoutY="14.0">
+               <image>
+                  <Image url="@../others/user52x50.png" />
+               </image>
+            </ImageView>
+            <Text fx:id="userText" fill="WHITE" layoutX="118.0" layoutY="56.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Anamaria" wrappingWidth="185.26171875">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+            </Text>
+            <Button layoutX="326.0" layoutY="470.0" mnemonicParsing="false" onAction="#handleExport" style="-fx-background-color: #11cc97; -fx-background-radius: 20;" text="Export as PDF" textFill="WHITE" />
+            <DatePicker fx:id="id_after" layoutX="186.0" layoutY="470.0" prefHeight="25.0" prefWidth="117.0" promptText="After" />
+            <DatePicker fx:id="id_before" layoutX="27.0" layoutY="470.0" prefHeight="25.0" prefWidth="117.0" promptText="Before" />
+
+         </children>
+      </Pane>
+   </children>
+</AnchorPane>

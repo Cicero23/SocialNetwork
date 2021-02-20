@@ -1,0 +1,28 @@
+#sign_in_button:hover{
+    -fx-background-color: #10cb6e;
+}
+#sign_in_button{
+    -fx-background-color: #11cc97;
+    -fx-background-radius: 20;
+}
+#register_page_button:hover{
+    -fx-background-color: #10cb6e;
+}
+#register_page_button{
+    -fx-background-color: #11cc97;
+    -fx-background-radius: 20;
+}
+#register_button:hover{
+    -fx-background-color: #10cb6e;
+}
+#register_button{
+    -fx-background-color: #11cc97;
+    -fx-background-radius: 20;
+}
+#login_page_button:hover{
+    -fx-background-color: #10cb6e;
+}
+#login_page_button{
+    -fx-background-color: #11cc97;
+    -fx-background-radius: 20;
+}
